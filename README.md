@@ -13,6 +13,7 @@ flowchart TD
     F -- no flags --> M[Mindi coordinator]
     M --> P[Psychology]
     M --> H[Hormonal]
+
     M --> G[Gynecology]
 ```
 
@@ -135,4 +136,4 @@ We recommend calling the agent from a server-side route (for example, a Vercel A
 
 ## Team
 
-Built by Aracely Ayala and Gonzalo as part of Proyecto Digital I at UTEC.
+Aracely Ayala UTEC
