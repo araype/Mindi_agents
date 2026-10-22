@@ -17,7 +17,7 @@ flowchart TD
     M --> G[Gynecology]
 ```
 
-1. **Red-flag filter.** A `before_model_callback` checks every message against fixed phrase lists *before* calling the model. If it matches, it returns a predefined message (urgent care vs. medical evaluation) and Gemini is never called. It is attached to every agent, so it keeps working after a transfer.
+1. **Red-flag filter.** A `before_model_callback` checks every message against fixed phrase lists *before* calling the model. If it matches, it returns a predefined message (self-harm support, urgent care, or medical evaluation) and the model is never called. It is attached to every agent, so it keeps working after a transfer. Colloquial uses ("estos bochornos van a matarme") are removed before matching, and physical or evaluation phrases are ignored when one of the three previous words is a negation ("no tengo dolor de pecho"). Negations never apply to self-harm phrases. The alert stays in the agents' instructions for the next 3 user messages and then expires.
 2. **Coordinator (`mindi`).** Answers general questions (what perimenopause is, what the test measures, how to use the report) and routes symptom questions to a specialist.
 3. **Specialist sub-agents.** Each one maps to a subscale of the Menopause Rating Scale (MRS):
 
@@ -27,21 +27,37 @@ flowchart TD
 | `hormonal` | Hot flashes, night sweats, palpitations, joint and muscle pain, period changes, general questions about hormone therapy |
 | `ginecologia` | Vaginal dryness, sexual health, urinary symptoms |
 
-All agents share the same rules: Peruvian Spanish, warm and brief, no emojis, no diagnoses, no absolute promises. If the session state contains the user's MRS results (`resultado_mrs`), agents use them for context.
+All agents share the same rules: Peruvian Spanish, warm and brief, no emojis, no diagnoses, no absolute promises.
+
+4. **Knowledge sheets.** Each agent's instruction includes short sheets in `mindi_agent/conocimiento/` (`comun.md` plus one per specialist). They summarize the HNHU 2024 climacteric guideline (primary source) and the AETSA 2015 guideline (complement) in patient-friendly language, citing the section of each claim. They deliberately leave out drug names, doses and the "therapeutic window". The sheets are the only clinical knowledge the agents get, so a clinician should review any change to them. Curly braces are not allowed in the sheets because ADK treats `{name}` as a state variable.
+5. **MRS reading.** If the session state contains `resultado_mrs`, a `before_agent_callback` turns it into `lectura_mrs` using the HNHU cut-offs (somatic ≥8, psychological ≥6, urogenital ≥3, total ≥8 / ≥15). Subscales are compared in proportion to their maximum to pick the area that affects her most. The model reads that sentence instead of interpreting raw numbers.
 
 ## Project structure
 
 ```
 mindi_agent/
 ├── __init__.py        # from . import agent
-├── agent.py           # filter, coordinator and sub-agents (root_agent)
+├── agent.py           # filter, MRS reading, coordinator and sub-agents (root_agent)
+├── conocimiento/      # knowledge sheets injected into each agent's instruction
 ├── requirements.txt
 └── .env.example       # copy to .env for local testing
+tests/
+└── test_filtro.py     # red-flag filter and MRS reading, no model calls
 ```
+
+Run the tests from the repo root:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The cases use the IDs of the team's question bank (A1, G3, J1...).
+
+Sub-agents hand the conversation back when the topic changes: to another specialist, or to `mindi` for general questions. Each one only sees the *other* areas in its instructions, and a `before_tool_callback` blocks any transfer to itself, which would otherwise crash the request in ADK.
 
 ## Run locally
 
-Requirements: Python 3.10+ and a Gemini API key from [Google AI Studio](https://aistudio.google.com).
+Requirements: Python 3.10+ and an OpenAI API key from the [OpenAI platform](https://platform.openai.com/api-keys). The agents use `openai/gpt-4o-mini` through LiteLLM; to switch back to Gemini, change `MODELO` in `agent.py` and use `GOOGLE_API_KEY` instead.
 
 ```bash
 pip install -r mindi_agent/requirements.txt
@@ -77,8 +93,8 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT \
   --role="roles/cloudbuild.builds.builder"
 
 # Store the API key as a secret
-echo "YOUR_API_KEY" | gcloud secrets create GOOGLE_API_KEY --data-file=-
-gcloud secrets add-iam-policy-binding GOOGLE_API_KEY \
+echo "YOUR_API_KEY" | gcloud secrets create OPENAI_API_KEY --data-file=-
+gcloud secrets add-iam-policy-binding OPENAI_API_KEY \
   --member="serviceAccount:PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
   --role="roles/secretmanager.secretAccessor"
 ```
@@ -92,7 +108,7 @@ adk deploy cloud_run \
   --service_name=mindi-agent \
   --allow_origins="https://YOUR-APP.vercel.app" \
   ./mindi_agent \
-  -- --set-secrets=GOOGLE_API_KEY=GOOGLE_API_KEY:latest --max-instances=2
+  -- --set-secrets=OPENAI_API_KEY=OPENAI_API_KEY:latest --max-instances=2
 ```
 
 Add `--with_ui` to also serve the ADK dev UI. Sessions are kept in memory by default and are lost when an instance restarts; pass `--session_service_uri` with a Postgres URL to persist them.
@@ -131,7 +147,7 @@ We recommend calling the agent from a server-side route (for example, a Vercel A
 
 - The red-flag lists are a first layer, not a complete safety system. Phrase matching misses many ways of describing a symptom, so logs should be reviewed regularly.
 - Conversations about health are sensitive personal data under Peru's Personal Data Protection Law (Ley 29733). Get explicit consent before storing them.
-- Check the data-use terms of your Gemini plan before handling real users' conversations.
+- Check the data-use terms of your OpenAI plan before handling real users' conversations.
 - Never commit `.env` or API keys.
 
 ## Team
