@@ -1,0 +1,6 @@
+# Archivos que NO se suben a Cloud Run (adk deploy y gcloud leen este archivo).
+# La key llega por Secret Manager, nunca dentro de la imagen.
+.env
+__pycache__/
+*.pyc
+.adk/
