@@ -12,21 +12,32 @@ from typing import Optional
 from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmRequest, LlmResponse
+from google.adk.models.lite_llm import LiteLlm
 from google.genai import types
 
-MODELO = "gemini-flash-latest"
+# Modelo de OpenAI vía LiteLLM (requiere OPENAI_API_KEY en el .env).
+# Para volver a Gemini: MODELO = "gemini-flash-latest"
+MODELO = LiteLlm(model="openai/gpt-4o-mini")
 
 # ---------------------------------------------------------------------------
 # 1. Filtro de banderas rojas
 # ---------------------------------------------------------------------------
-# Lista inicial: ajústala con la guía del HNHU y con lo que veas en los logs.
-# Una lista de frases no detecta todo; es la primera capa, no la única.
+# Listas iniciales: ajústalas con la guía del HNHU y con lo que veas en los
+# logs. Una lista de frases no detecta todo; es la primera capa, no la única.
+# Escríbelas en minúsculas y sin tildes (el mensaje se normaliza igual).
 
-EMERGENCIA = [
+# Se revisa primero: si una usuaria menciona hacerse daño, ese tema manda.
+AUTOLESION = [
+    "no quiero vivir", "no quiero seguir viviendo", "quitarme la vida",
+    "hacerme dano", "lastimarme", "matarme", "suicid",
+    "acabar con todo", "no vale la pena vivir", "desaparecer para siempre",
+]
+
+EMERGENCIA_FISICA = [
     "dolor de pecho", "dolor en el pecho", "presion en el pecho",
+    "opresion en el pecho", "me aprieta el pecho",
     "falta de aire", "me falta el aire", "no puedo respirar",
     "me cuesta respirar", "me desmaye", "desmayo",
-    "no quiero vivir", "quitarme la vida", "hacerme dano",
 ]
 
 EVALUACION_MEDICA = [
@@ -35,18 +46,28 @@ EVALUACION_MEDICA = [
     "bulto en la mama", "trombosis", "coagulo",
 ]
 
+MENSAJE_AUTOLESION = (
+    "Gracias por contármelo, sé que no es fácil decirlo. Lo que sientes importa "
+    "y no tienes que pasarlo sola. Puedes llamar a la Línea 113, opción 5, para "
+    "hablar con un profesional de salud mental. Si sientes que puedes hacerte "
+    "daño ahora mismo, acude a emergencias o llama al 106 (SAMU). También puede "
+    "ayudarte avisarle a alguien de confianza que esté cerca. Si quieres, "
+    "puedes seguir contándome cómo te sientes."
+)
+
 MENSAJE_EMERGENCIA = (
     "Gracias por contármelo. Lo que describes necesita atención médica pronto, "
     "y no es algo que yo pueda evaluar por aquí. Si te pasa ahora, acude a "
-    "emergencias o llama al 106 (SAMU). Si piensas en hacerte daño, puedes "
-    "llamar a la Línea 113, opción 5. Cuando estés bien atendida, aquí sigo."
+    "emergencias o llama al 106 (SAMU). Si tenías otra pregunta, puedes "
+    "escribírmela cuando estés bien atendida."
 )
 
 MENSAJE_EVALUACION = (
     "Gracias por contarme esto. Es algo que conviene que revise un médico o "
     "ginecóloga antes de cualquier tratamiento, para descartar otras causas. "
     "No es motivo para alarmarse, pero sí para pedir una cita pronto. "
-    "Si quieres, te ayudo a preparar qué contarle en la consulta."
+    "Si quieres, te ayudo a preparar qué contarle en la consulta, o puedes "
+    "escribirme cualquier otra duda que tengas."
 )
 
 
@@ -75,7 +96,11 @@ def filtro_banderas_rojas(
     """Si detecta una bandera roja, responde directo y NO llama al modelo."""
     mensaje = _normalizar(_ultimo_mensaje_usuaria(llm_request))
 
-    if any(frase in mensaje for frase in EMERGENCIA):
+    if any(frase in mensaje for frase in AUTOLESION):
+        callback_context.state["ultima_bandera"] = "autolesion"
+        return _respuesta(MENSAJE_AUTOLESION)
+
+    if any(frase in mensaje for frase in EMERGENCIA_FISICA):
         callback_context.state["ultima_bandera"] = "emergencia"
         return _respuesta(MENSAJE_EMERGENCIA)
 
@@ -90,13 +115,18 @@ def filtro_banderas_rojas(
 # 2. Reglas comunes de tono y seguridad
 # ---------------------------------------------------------------------------
 REGLAS_COMUNES = """
-- Hablas en español peruano, cálido y claro, sin emojis.
+- Hablas en español peruano, cálido y claro, sin emojis. Di "bochornos"
+  (no "sofocos") y "regla" o "menstruación", como se dice en el Perú.
 - Explicas y orientas, pero NUNCA diagnosticas ni indicas medicamentos o dosis.
 - No prometes resultados ni privacidad absoluta.
 - Si no sabes algo, lo dices y sugieres consultarlo con su médico de confianza.
 - Respuestas breves: máximo 3 párrafos cortos.
 - Si en el estado hay resultados del test MRS ({resultado_mrs?}), úsalos para
   contextualizar; si no hay, invita a hacer el test cuando sea pertinente.
+- Última alerta del filtro en esta conversación: {ultima_bandera?}. Si es
+  'autolesion', responde con calidez y sin juzgar, no minimices lo que siente,
+  no des consejos que reemplacen la ayuda profesional y, en algún momento de
+  tu respuesta, recuérdale que puede llamar a la Línea 113, opción 5.
 """
 
 # ---------------------------------------------------------------------------
@@ -145,13 +175,15 @@ Cómo respondes:
 1. Explica de forma simple qué está pasando en el cuerpo y por qué.
 2. Da 1 o 2 medidas seguras del día a día (ropa en capas, hidratación,
    actividad física moderada, identificar desencadenantes).
-3. Si pregunta por terapia hormonal: explica que existe, que no es para todas
+3. Si ella NO preguntó por terapia hormonal ni por tratamientos, no los
+   menciones en absoluto, ni siquiera como opción a futuro.
+   Si SÍ preguntó: explica que existe, que no es para todas
    y que la decisión se toma con su médico según su historia. Menciona que el
    tabaquismo, la migraña con aura, el antecedente de cáncer de mama o de
    trombosis y el tiempo desde la menopausia influyen en esa decisión.
    Nunca recomiendes un medicamento, dosis ni marca, ni le digas que lo
    empiece, cambie o suspenda.
-4. Orienta a ginecología o medicina general para evaluar opciones.
+4. Si los síntomas le afectan mucho, orienta a ginecología o medicina general.
 {REGLAS_COMUNES}
 """,
     before_model_callback=filtro_banderas_rojas,
@@ -209,6 +241,8 @@ A quién transferir:
 Qué respondes tú:
 - Dudas generales (qué es la perimenopausia, qué mide el test, cómo leer o
   usar su reporte con su médico).
+- No respondas tú preguntas sobre un síntoma concreto ni sobre tratamientos
+  (incluida la terapia hormonal): transfiere siempre al área que corresponde.
 - Si menciona síntomas de varias áreas, transfiere al área del síntoma que
   más le preocupa o que tiene mayor puntaje en su test; si no está claro,
   pregúntale cuál quiere abordar primero.
