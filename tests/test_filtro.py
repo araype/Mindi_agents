@@ -19,6 +19,7 @@ from mindi_agent.agent import (
     ginecologia,
     hormonal,
     lectura_mrs,
+    RECOMENDACION_MEDICO,
     psicologia,
     recordar_linea_113,
 )
@@ -307,6 +308,41 @@ class LecturaMRS(unittest.TestCase):
             {"total": 18, "somatico": 7, "psicologico": 8, "urogenital": 3}
         )
         self.assertIn("15 o más", lectura)
+
+    def test_b_por_una_sola_parte(self):
+        # Total 5, pero urogenital 3 llega a su corte: la web muestra B.
+        lectura = lectura_mrs(
+            {"total": 5, "somatico": 1, "psicologico": 1, "urogenital": 3}
+        )
+        self.assertIn("menos de 8", lectura)
+        self.assertIn(RECOMENDACION_MEDICO["B"], lectura)
+        self.assertNotIn("por debajo de los puntos de corte de la guía", lectura)
+
+    def test_recomendacion_por_nivel(self):
+        casos = (
+            ({"total": 6, "somatico": 4, "psicologico": 2, "urogenital": 0}, "A"),
+            ({"total": 9, "somatico": 5, "psicologico": 3, "urogenital": 1}, "B"),
+            ({"total": 18, "somatico": 7, "psicologico": 8, "urogenital": 3}, "C"),
+        )
+        for resultado, nivel in casos:
+            with self.subTest(nivel=nivel):
+                self.assertIn(RECOMENDACION_MEDICO[nivel], lectura_mrs(resultado))
+
+    def test_senal_alerta_manda(self):
+        lectura = lectura_mrs(
+            {"total": 6, "somatico": 4, "psicologico": 2, "urogenital": 0,
+             "senal_alerta": True}
+        )
+        self.assertIn("señal de alerta", lectura)
+        self.assertIn(RECOMENDACION_MEDICO["alerta"], lectura)
+        self.assertNotIn(RECOMENDACION_MEDICO["A"], lectura)
+
+    def test_total_alto_sin_nivel_alto(self):
+        # La web ya no habla de "nivel alto": describe la acción de la guía.
+        lectura = lectura_mrs(
+            {"total": 18, "somatico": 7, "psicologico": 8, "urogenital": 3}
+        )
+        self.assertNotIn("nivel alto", lectura)
 
     def test_datos_invalidos(self):
         for resultado in (None, "18", {}, {"somatico": "alto"}, {"somatico": 99},
