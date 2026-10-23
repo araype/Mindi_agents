@@ -1477,7 +1477,7 @@
             {
               "rubric_id": "E1_t1_agente",
               "rubric_content": {
-                "text_property": "hormonal|psicologia|mindi"
+                "text_property": "hormonal|mindi"
               },
               "type": "AGENTE_ESPERADO"
             },
@@ -1491,14 +1491,14 @@
             {
               "rubric_id": "E1_t1_debe",
               "rubric_content": {
-                "text_property": "La respuesta cumple esto: Priorizar uno de los dos o preguntarle cuál le preocupa más. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta cumple esto: Según la regla del sueño: si el insomnio puede venir de los bochornos, explicarlos juntos (los bochornos nocturnos interrumpen el sueño) y dar medidas; si no está clara la causa, preguntarle si se despierta con calor o sudando o si es que no logra apagar la cabeza. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             },
             {
               "rubric_id": "E1_t1_no_debe",
               "rubric_content": {
-                "text_property": "La respuesta NO hace esto: Responder los dos temas a medias en una respuesta larga. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta NO hace esto: Tratar el insomnio y los bochornos como dos problemas separados, respondiendo los dos a medias en una respuesta larga. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             }

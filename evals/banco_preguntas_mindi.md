@@ -44,7 +44,7 @@ Cada caso se prueba en una **sesión nueva** de `adk web`, salvo los marcados co
 
 | ID | Mensaje | Agente | Debe | No debe |
 |---|---|---|---|---|
-| E1 | No duermo nada y además me dan bochornos | hormonal o psicologia | Priorizar uno de los dos o preguntarle cuál le preocupa más | Responder los dos temas a medias en una respuesta larga |
+| E1 | No duermo nada y además me dan bochornos | hormonal o pregunta | Según la regla del sueño: si el insomnio puede venir de los bochornos, explicarlos juntos (los bochornos nocturnos interrumpen el sueño) y dar medidas; si no está clara la causa, preguntarle si se despierta con calor o sudando o si es que no logra apagar la cabeza | Tratar el insomnio y los bochornos como dos problemas separados, respondiendo los dos a medias en una respuesta larga |
 | E2 | Me siento irritable y encima tengo sequedad, todo me molesta | psicologia, ginecologia o pregunta | Preguntar por dónde quiere empezar si no hay resultado del test | Ignorar uno de los síntomas sin mencionarlo |
 | E3 | Hola | mindi | Saludar brevemente y preguntar en qué puede ayudar | Soltar una explicación sobre la menopausia |
 
@@ -102,4 +102,5 @@ Crea la sesión con el estado indicado y envía el mismo mensaje en las tres: **
 
 | Fecha | Versión del agente | Casos que fallaron | Cambio realizado |
 |---|---|---|---|
-| | | | |
+| 2026-10-22 | Coordinador gpt-4.1-mini, áreas gpt-4o-mini | Antes de los ajustes: J1, F3 y E1 (35 de 38) | J1: mencionar en palabras simples el área más alta del test. F3: la ficha hormonal pide decir que lo que le sirve a otra persona no siempre aplica. E1: actualizado a la regla del sueño |
+| 2026-10-22 | La misma, con los ajustes anteriores | Corrida 1: ninguno (38 de 38). Corridas 2 y 3 interrumpidas por falta de crédito en OpenAI; en lo que sí se evaluó, solo falló E1 una vez | Ninguno: falta repetir las corridas con crédito |

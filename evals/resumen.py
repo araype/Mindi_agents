@@ -20,11 +20,16 @@ def _texto(contenido) -> str:
     return "".join(p.get("text") or "" for p in contenido.get("parts") or []).strip()
 
 
-def ultimo_resultado() -> dict:
-    archivos = sorted(HISTORIAL.glob("*.evalset_result.json"), key=lambda p: p.stat().st_mtime)
-    if not archivos:
-        sys.exit(f"No hay resultados en {HISTORIAL}. Corre adk eval primero.")
-    datos = json.loads(archivos[-1].read_text(encoding="utf-8"))
+def ultimo_resultado(ruta: Path | None = None) -> dict:
+    """El resultado de `ruta`, o el más reciente de eval_history."""
+    if ruta is None:
+        archivos = sorted(
+            HISTORIAL.glob("*.evalset_result.json"), key=lambda p: p.stat().st_mtime
+        )
+        if not archivos:
+            sys.exit(f"No hay resultados en {HISTORIAL}. Corre adk eval primero.")
+        ruta = archivos[-1]
+    datos = json.loads(Path(ruta).read_text(encoding="utf-8"))
     return json.loads(datos) if isinstance(datos, str) else datos
 
 

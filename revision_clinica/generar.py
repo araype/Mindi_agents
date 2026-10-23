@@ -8,6 +8,9 @@ Toma todo de la fuente, para que el documento no se desactualice:
 
 Correr desde la raíz del repo, después de adk eval:
     python revision_clinica/generar.py
+Para usar una corrida que no es la última (por ejemplo, si la última se
+interrumpió), pasa su archivo de resultados:
+    python revision_clinica/generar.py --resultado ruta/al/evalset_result.json
 """
 
 import subprocess
@@ -237,8 +240,14 @@ def _orden_banco(caso: dict) -> tuple[str, int]:
     return caso["id"][0], int(caso["id"][1:])
 
 
+def _ruta_resultado() -> Path | None:
+    if "--resultado" in sys.argv:
+        return Path(sys.argv[sys.argv.index("--resultado") + 1])
+    return None
+
+
 def seccion_banco() -> str:
-    lista = sorted(casos(ultimo_resultado()), key=_orden_banco)
+    lista = sorted(casos(ultimo_resultado(_ruta_resultado())), key=_orden_banco)
     esperado = _esperado_por_caso()
     pasan = sum(c["paso"] for c in lista)
     partes = [f"""## 5. Banco de preguntas con las respuestas reales

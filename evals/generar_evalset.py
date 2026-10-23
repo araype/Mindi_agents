@@ -83,8 +83,6 @@ AJUSTES = {
             " con calor o sudando o si es que no logra apagar la cabeza."
         ),
     },
-    # El "Debe" de E1 acepta preguntarle cuál le preocupa más.
-    "E1": {"agentes": "hormonal|psicologia|mindi"},
 }
 
 

@@ -54,7 +54,9 @@ evals/
 └── resumen.py                 # readable summary of the last run
 revision_clinica/
 ├── generar.py                 # builds the document for the medical team
-└── revision_clinica.md        # generated
+├── generar_docx.py            # Markdown -> Word, with Track Changes on
+├── revision_clinica.md        # generated
+└── revision_clinica.docx      # generated, for comments and tracked changes
 ```
 
 Run the tests from the repo root:
@@ -79,7 +81,7 @@ The question bank in `evals/banco_preguntas_mindi.md` is turned into an `adk eva
 | `mensaje_fijo_correcto` | The red-flag filter returned the expected fixed message, or none | Code, exact text |
 | `respuesta_cumple_banco` | The answer meets the general criteria and the "Debe" / "No debe" columns | `gpt-4o` as judge, with rubrics |
 
-Multi-turn cases (I) run as one conversation, and J cases start with `resultado_mrs` in the session state. A few expectations were adjusted after the bank was written (sleep rule for B2, asking first in E1); they are listed in `AJUSTES` in `generar_evalset.py`.
+Multi-turn cases (I) run as one conversation, and J cases start with `resultado_mrs` in the session state. B2 was adjusted after the bank was written (sleep rule: the coordinator may ask first); that change is in `AJUSTES` in `generar_evalset.py`.
 
 Setup (once, in the same virtualenv as the agent):
 
@@ -102,7 +104,15 @@ python evals/resumen.py
 
 To run only some cases, append their IDs: `evals/mindi.evalset.json:B2,J3`. A full run takes about 10 minutes and calls the agent's models and the judge, so it costs a little OpenAI credit. Answers vary between runs, so rerun a failing case before changing the agent; the judge also makes occasional mistakes, so read its reason in the summary. Results are saved in `mindi_agent/.adk/eval_history/` (ignored by git).
 
-After a run, `python revision_clinica/generar.py` rebuilds the document for the medical team with the real answers.
+After a run, rebuild the document for the medical team with the real answers:
+
+```bash
+pip install "python-docx==1.1.2"   # once
+python revision_clinica/generar.py        # Markdown (add --resultado FILE to use an older run)
+python revision_clinica/generar_docx.py   # Word copy, opens with Track Changes on
+```
+
+If a run fails with `RateLimitError: You have no credits remaining`, the OpenAI account is out of credit: the cases show empty metrics and the run is not valid. The deployed service uses the same account, so it also returns HTTP 500 for anything that reaches the model (the fixed red-flag messages still work).
 
 ## Run locally
 
