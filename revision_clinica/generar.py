@@ -172,15 +172,21 @@ cuenta. Los puntos de corte salen de la guía del HNHU (Figura 6 y 6.4.1.2):
     for nombre, (corte, maximo, agente, tema) in A.SUBESCALAS_MRS.items():
         partes.append(f"| {nombre} ({tema}) | {maximo} | {corte} | {NOMBRES_AGENTES[agente]} |\n")
     partes.append("""
-Para el total (máximo 44): 15 o más es "nivel alto"; de 8 a 14, "nivel en el
-que la guía sugiere evaluación médica"; menos de 8, "por debajo de los puntos
-de corte". Si hay más de una parte alterada, se compara en proporción a su
-máximo para elegir "lo que más le afecta".
+Para el total (máximo 44): 15 o más, "en el rango en que la guía considera el
+tratamiento muy recomendable"; de 8 a 14, "nivel en el que la guía sugiere
+evaluación médica"; menos de 8, "el total no llega al punto de corte". Si hay
+más de una parte alterada, se compara en proporción a su máximo para elegir
+"lo que más le afecta".
+
+La frase también incluye la recomendación de ir al médico que la usuaria ya
+vio en su resultado del test en la web (nivel A, B o C, o la de señal de
+alerta si marcó una), para que el agente no la contradiga.
 
 **Punto a validar:** la Figura 6 da estos cortes para decidir terapia
-hormonal; Mindi los usa solo para orientar a qué profesional acudir. Las
-frases "nivel alto, conviene una consulta pronto" y "nivel en el que la guía
-sugiere evaluación médica" son redacción nuestra.
+hormonal; Mindi los usa para orientar a qué profesional acudir. Revisen en
+especial la frase del total de 15 o más, que menciona el tratamiento: los
+agentes la leen como contexto, y no deben ofrecer terapia hormonal si la
+usuaria no pregunta.
 
 Frases posibles (los agentes no se las leen tal cual a la usuaria; las usan
 como contexto):
