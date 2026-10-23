@@ -104,3 +104,4 @@ Crea la sesión con el estado indicado y envía el mismo mensaje en las tres: **
 |---|---|---|---|
 | 2026-10-22 | Coordinador gpt-4.1-mini, áreas gpt-4o-mini | Antes de los ajustes: J1, F3 y E1 (35 de 38) | J1: mencionar en palabras simples el área más alta del test. F3: la ficha hormonal pide decir que lo que le sirve a otra persona no siempre aplica. E1: actualizado a la regla del sueño |
 | 2026-10-22 | La misma, con los ajustes anteriores | Corrida 1: ninguno (38 de 38). Corridas 2 y 3 interrumpidas por falta de crédito en OpenAI; en lo que sí se evaluó, solo falló E1 una vez | Ninguno: falta repetir las corridas con crédito |
+| 2026-10-23 | La misma (desplegada como mindi-agent-00003-6bj) | Corrida 1: F2 e I1 (36 de 38; I1 fue error del juez, la respuesta tiene 3 párrafos). Corrida 2: J1 (37 de 38). Corrida 3: ninguno (38 de 38) | Ninguno. En la nube, J1 se derivó bien 3 de 3 veces, pero ninguna respuesta mencionó el área más alta del test |
