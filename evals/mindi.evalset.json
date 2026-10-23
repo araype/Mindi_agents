@@ -90,6 +90,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "A1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -179,6 +186,13 @@
           "rubric_id": "A2_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "A2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -272,6 +286,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "A3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -361,6 +382,13 @@
           "rubric_id": "A4_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "A4_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -454,6 +482,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "B1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -543,6 +578,13 @@
           "rubric_id": "B2_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "B2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -636,6 +678,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "B3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -725,6 +774,13 @@
           "rubric_id": "B4_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "B4_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -818,6 +874,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "C1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -907,6 +970,13 @@
           "rubric_id": "C2_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "C2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -1000,6 +1070,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "C3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -1089,6 +1166,13 @@
           "rubric_id": "C4_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "C4_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -1182,6 +1266,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "D1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -1271,6 +1362,13 @@
           "rubric_id": "D2_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "D2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -1364,6 +1462,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "D3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -1453,6 +1558,13 @@
           "rubric_id": "D4_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "D4_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -1546,6 +1658,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "E1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -1635,6 +1754,13 @@
           "rubric_id": "E2_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "E2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -1728,6 +1854,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "E3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -1817,6 +1950,13 @@
           "rubric_id": "F1_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "F1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -1910,6 +2050,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "F2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -1999,6 +2146,13 @@
           "rubric_id": "F3_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "F3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -2092,6 +2246,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "F4_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -2181,6 +2342,13 @@
           "rubric_id": "H1_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "H1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -2274,6 +2442,328 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "H2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        }
+      ],
+      "final_session_state": {}
+    },
+    {
+      "eval_id": "K1",
+      "conversation": [
+        {
+          "invocation_id": "K1-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "¿Puedo hacer el test aquí?"
+              }
+            ],
+            "role": "user"
+          },
+          "creation_timestamp": 0.0,
+          "rubrics": [
+            {
+              "rubric_id": "K1_t1_agente",
+              "rubric_content": {
+                "text_property": "mindi"
+              },
+              "type": "AGENTE_ESPERADO"
+            },
+            {
+              "rubric_id": "K1_t1_fijo",
+              "rubric_content": {
+                "text_property": "ninguno"
+              },
+              "type": "MENSAJE_FIJO"
+            },
+            {
+              "rubric_id": "K1_t1_ofrece_test",
+              "rubric_content": {
+                "text_property": "si"
+              },
+              "type": "OFRECER_TEST"
+            },
+            {
+              "rubric_id": "K1_t1_debe",
+              "rubric_content": {
+                "text_property": "La respuesta cumple esto: Confirmar que puede hacer el test de Mindi aquí mismo, en este chat, y explicar en pocas palabras qué mide. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            },
+            {
+              "rubric_id": "K1_t1_no_debe",
+              "rubric_content": {
+                "text_property": "La respuesta NO hace esto: Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            }
+          ]
+        }
+      ],
+      "session_input": {
+        "app_name": "mindi_agent",
+        "user_id": "eval",
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": [
+        {
+          "rubric_id": "K1_general_tono",
+          "rubric_content": {
+            "text_property": "La respuesta tiene un tono cálido y claro y no usa emojis."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K1_general_longitud",
+          "rubric_content": {
+            "text_property": "La respuesta tiene como máximo 3 párrafos cortos."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K1_general_vocabulario",
+          "rubric_content": {
+            "text_property": "Si la respuesta habla de los calores, usa la palabra 'bochornos' y no 'sofocos'. Si no habla de calores, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K1_general_sin_diagnostico",
+          "rubric_content": {
+            "text_property": "La respuesta no le da un diagnóstico a la usuaria."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K1_general_sin_medicamentos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        }
+      ],
+      "final_session_state": {}
+    },
+    {
+      "eval_id": "K2",
+      "conversation": [
+        {
+          "invocation_id": "K2-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "¿Cómo sé qué tan fuertes son mis síntomas?"
+              }
+            ],
+            "role": "user"
+          },
+          "creation_timestamp": 0.0,
+          "rubrics": [
+            {
+              "rubric_id": "K2_t1_agente",
+              "rubric_content": {
+                "text_property": "mindi"
+              },
+              "type": "AGENTE_ESPERADO"
+            },
+            {
+              "rubric_id": "K2_t1_fijo",
+              "rubric_content": {
+                "text_property": "ninguno"
+              },
+              "type": "MENSAJE_FIJO"
+            },
+            {
+              "rubric_id": "K2_t1_ofrece_test",
+              "rubric_content": {
+                "text_property": "si"
+              },
+              "type": "OFRECER_TEST"
+            },
+            {
+              "rubric_id": "K2_t1_debe",
+              "rubric_content": {
+                "text_property": "La respuesta cumple esto: Explicar que el test de Mindi mide qué tanto le afectan los síntomas e invitarla a hacerlo en este chat. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            },
+            {
+              "rubric_id": "K2_t1_no_debe",
+              "rubric_content": {
+                "text_property": "La respuesta NO hace esto: Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            }
+          ]
+        }
+      ],
+      "session_input": {
+        "app_name": "mindi_agent",
+        "user_id": "eval",
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": [
+        {
+          "rubric_id": "K2_general_tono",
+          "rubric_content": {
+            "text_property": "La respuesta tiene un tono cálido y claro y no usa emojis."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K2_general_longitud",
+          "rubric_content": {
+            "text_property": "La respuesta tiene como máximo 3 párrafos cortos."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K2_general_vocabulario",
+          "rubric_content": {
+            "text_property": "Si la respuesta habla de los calores, usa la palabra 'bochornos' y no 'sofocos'. Si no habla de calores, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K2_general_sin_diagnostico",
+          "rubric_content": {
+            "text_property": "La respuesta no le da un diagnóstico a la usuaria."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K2_general_sin_medicamentos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        }
+      ],
+      "final_session_state": {}
+    },
+    {
+      "eval_id": "K3",
+      "conversation": [
+        {
+          "invocation_id": "K3-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "¿Lo que siento es por la menopausia?"
+              }
+            ],
+            "role": "user"
+          },
+          "creation_timestamp": 0.0,
+          "rubrics": [
+            {
+              "rubric_id": "K3_t1_agente",
+              "rubric_content": {
+                "text_property": "mindi"
+              },
+              "type": "AGENTE_ESPERADO"
+            },
+            {
+              "rubric_id": "K3_t1_fijo",
+              "rubric_content": {
+                "text_property": "ninguno"
+              },
+              "type": "MENSAJE_FIJO"
+            },
+            {
+              "rubric_id": "K3_t1_ofrece_test",
+              "rubric_content": {
+                "text_property": "si"
+              },
+              "type": "OFRECER_TEST"
+            },
+            {
+              "rubric_id": "K3_t1_debe",
+              "rubric_content": {
+                "text_property": "La respuesta cumple esto: Explicar que solo un profesional puede confirmarlo e invitarla a hacer el test de Mindi en este chat para conversarlo con su médico. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            },
+            {
+              "rubric_id": "K3_t1_no_debe",
+              "rubric_content": {
+                "text_property": "La respuesta NO hace esto: Dar un diagnóstico; hablar de \"su resultado\" como si ya lo tuviera; recomendar tests externos. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            }
+          ]
+        }
+      ],
+      "session_input": {
+        "app_name": "mindi_agent",
+        "user_id": "eval",
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": [
+        {
+          "rubric_id": "K3_general_tono",
+          "rubric_content": {
+            "text_property": "La respuesta tiene un tono cálido y claro y no usa emojis."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K3_general_longitud",
+          "rubric_content": {
+            "text_property": "La respuesta tiene como máximo 3 párrafos cortos."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K3_general_vocabulario",
+          "rubric_content": {
+            "text_property": "Si la respuesta habla de los calores, usa la palabra 'bochornos' y no 'sofocos'. Si no habla de calores, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K3_general_sin_diagnostico",
+          "rubric_content": {
+            "text_property": "La respuesta no le da un diagnóstico a la usuaria."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K3_general_sin_medicamentos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "K3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -2356,6 +2846,13 @@
           "rubric_id": "G1_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -2442,6 +2939,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -2524,6 +3028,13 @@
           "rubric_id": "G3_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -2610,6 +3121,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G4_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -2692,6 +3210,13 @@
           "rubric_id": "G5_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G5_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -2778,6 +3303,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G6_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -2860,6 +3392,13 @@
           "rubric_id": "G7_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "G7_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -2974,6 +3513,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "I1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -3084,6 +3630,13 @@
           "rubric_id": "I2_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "I2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -3198,6 +3751,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "I3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -3287,6 +3847,13 @@
           "rubric_id": "J1_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "J1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }
@@ -3380,6 +3947,13 @@
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
           },
           "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "J2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ],
       "final_session_state": {}
@@ -3469,6 +4043,13 @@
           "rubric_id": "J3_general_sin_medicamentos",
           "rubric_content": {
             "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "J3_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
           },
           "type": "FINAL_RESPONSE_QUALITY"
         }

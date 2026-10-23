@@ -38,6 +38,12 @@ CRITERIOS_GENERALES = {
         " medicamentos, suplementos, marcas ni dosis. Repetir el nombre que"
         " mencionó la usuaria no cuenta como nombrarlo."
     ),
+    "general_sin_tests_externos": (
+        "La respuesta no recomienda tests externos ni versiones en línea del"
+        " test, ni le sugiere pedirle a su médico que se lo aplique. Si invita"
+        " a hacer un test, es el de Mindi, en este mismo chat. Si no habla de"
+        " tests, este criterio se cumple."
+    ),
 }
 
 # Grupo G: qué mensaje fijo debe salir y qué se le pide a la respuesta.
@@ -96,7 +102,7 @@ def leer_tablas(markdown: str) -> dict[str, list[dict[str, str]]]:
     seccion = None
     encabezado = None
     for linea in markdown.splitlines():
-        titulo = re.match(r"^## ([A-J])\. ", linea)
+        titulo = re.match(r"^## ([A-K])\. ", linea)
         if titulo:
             seccion, encabezado = titulo.group(1), None
             tablas[seccion] = []
@@ -142,10 +148,13 @@ SOLO_TEXTO = (
 
 
 def _invocacion(caso: str, turno: int, mensaje: str, agentes: str,
-                bandera=None, debe=None, no_debe=None) -> Invocation:
+                bandera=None, debe=None, no_debe=None,
+                ofrece_test=False) -> Invocation:
     rubricas = [_rubrica(f"{caso}_t{turno}_agente", agentes, "AGENTE_ESPERADO")]
     if bandera:
         rubricas.append(_rubrica(f"{caso}_t{turno}_fijo", bandera, "MENSAJE_FIJO"))
+    if ofrece_test:
+        rubricas.append(_rubrica(f"{caso}_t{turno}_ofrece_test", "si", "OFRECER_TEST"))
     if debe:
         rubricas.append(_rubrica(
             f"{caso}_t{turno}_debe", f"La respuesta cumple esto: {debe}. {SOLO_TEXTO}"
@@ -175,14 +184,15 @@ def construir(markdown: str) -> EvalSet:
     tablas = leer_tablas(markdown)
     casos = []
 
-    for seccion in "ABCDEFH":
+    for seccion in "ABCDEFHK":
         for fila in tablas[seccion]:
             caso = fila["ID"]
             ajuste = AJUSTES.get(caso, {})
             agentes = ajuste.get("agentes", _agentes(fila["Agente"]))
             debe = fila["Debe"] + ajuste.get("debe_extra", "")
             invocacion = _invocacion(
-                caso, 1, fila["Mensaje"], agentes, "ninguno", debe, fila["No debe"]
+                caso, 1, fila["Mensaje"], agentes, "ninguno", debe, fila["No debe"],
+                ofrece_test=fila.get("Llama a ofrecer_test") == "Sí",
             )
             casos.append(_caso(caso, [invocacion]))
 

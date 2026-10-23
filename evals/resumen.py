@@ -11,7 +11,10 @@ import sys
 from pathlib import Path
 
 HISTORIAL = Path(__file__).parent.parent / "mindi_agent" / ".adk" / "eval_history"
-METRICAS = ("agente_correcto", "mensaje_fijo_correcto", "respuesta_cumple_banco")
+METRICAS = (
+    "agente_correcto", "mensaje_fijo_correcto", "ofrece_test_correcto",
+    "respuesta_cumple_banco",
+)
 
 
 def _texto(contenido) -> str:

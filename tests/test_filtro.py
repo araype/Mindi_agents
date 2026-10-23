@@ -353,3 +353,15 @@ class LecturaMRS(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HerramientaOfrecerTest(unittest.TestCase):
+    def test_todos_los_agentes_la_tienen(self):
+        from mindi_agent.agent import ofrecer_test, root_agent
+        for agente in (root_agent, psicologia, hormonal, ginecologia):
+            with self.subTest(agente=agente.name):
+                self.assertIn(ofrecer_test, agente.tools)
+
+    def test_no_hace_nada_mas(self):
+        from mindi_agent.agent import ofrecer_test
+        self.assertIsInstance(ofrecer_test(), dict)

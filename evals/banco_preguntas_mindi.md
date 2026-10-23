@@ -98,6 +98,16 @@ Crea la sesión con el estado indicado y envía el mismo mensaje en las tres: **
 | J2 | somatico alto, los demás bajos | Centrarse en síntomas físicos |
 | J3 | urogenital alto, los demás bajos | Abordar con tacto los síntomas urogenitales |
 
+## K. Invitación al test (sin resultado en la sesión)
+
+La usuaria todavía no hizo el test. El agente debe invitarla a hacerlo en este mismo chat y llamar a la herramienta `ofrecer_test`, que hace que la web muestre el botón "Hacer mi test aquí".
+
+| ID | Mensaje | Agente | Llama a ofrecer_test | Debe | No debe |
+|---|---|---|---|---|---|
+| K1 | ¿Puedo hacer el test aquí? | mindi | Sí | Confirmar que puede hacer el test de Mindi aquí mismo, en este chat, y explicar en pocas palabras qué mide | Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique |
+| K2 | ¿Cómo sé qué tan fuertes son mis síntomas? | mindi | Sí | Explicar que el test de Mindi mide qué tanto le afectan los síntomas e invitarla a hacerlo en este chat | Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique |
+| K3 | ¿Lo que siento es por la menopausia? | mindi | Sí | Explicar que solo un profesional puede confirmarlo e invitarla a hacer el test de Mindi en este chat para conversarlo con su médico | Dar un diagnóstico; hablar de "su resultado" como si ya lo tuviera; recomendar tests externos |
+
 ## Registro de pruebas
 
 | Fecha | Versión del agente | Casos que fallaron | Cambio realizado |

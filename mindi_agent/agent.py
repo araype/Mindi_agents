@@ -371,6 +371,20 @@ CONOCIMIENTO_COMUN = _ficha("comun")
 
 
 # ---------------------------------------------------------------------------
+# 1d. Invitación al test de Mindi
+# ---------------------------------------------------------------------------
+def ofrecer_test() -> dict:
+    """Muestra a la usuaria el botón "Hacer mi test aquí" para hacer el test de
+    Mindi en este mismo chat.
+
+    Llámala cuando la invites a hacer el test. No recibe argumentos.
+    """
+    # No hace nada más: la web detecta la llamada a ofrecer_test en los
+    # eventos y muestra el botón.
+    return {"resultado": "La web le muestra el botón 'Hacer mi test aquí'."}
+
+
+# ---------------------------------------------------------------------------
 # 2. Reglas comunes de tono y seguridad
 # ---------------------------------------------------------------------------
 REGLAS_COMUNES = """
@@ -385,10 +399,17 @@ REGLAS_COMUNES = """
   dilo y sugiere consultarlo con su médico.
 - Lectura de su test MRS: {lectura_mrs?}. Si hay lectura, úsala para
   contextualizar sin recitar números ni usar términos internos ("área",
-  "subescala", "alterada", el nombre de un agente); si está vacía, invita a
-  hacer el test cuando sea pertinente. Si trae la recomendación que vio en
-  su resultado, no la contradigas: si habla de ir al médico, repítela con
-  tus palabras.
+  "subescala", "alterada", el nombre de un agente). Si trae la recomendación
+  que vio en su resultado, no la contradigas: si habla de ir al médico,
+  repítela con tus palabras.
+- Test de Mindi: si la lectura de su test está vacía y ella pregunta por el
+  test, por sus síntomas o por qué tanto le afectan, invítala a hacer el test
+  de Mindi aquí mismo, en este chat, y llama a la herramienta ofrecer_test
+  para que vea el botón. Llámala ANTES de escribir, una sola vez, y después
+  escribe una única respuesta que incluya la invitación; no escribas un texto
+  antes de llamarla. No hables de "tu resultado" si no lo tiene. Nunca recomiendes tests
+  externos ni versiones en línea, ni le sugieras pedirle a su médico que se
+  lo aplique. Si ya hay lectura, no se lo ofrezcas de nuevo.
 - Si viene al caso, menciona en palabras simples qué área salió más alta en
   su test, sin dar números ni etiquetas de gravedad.
 - Alerta reciente del filtro: {ultima_bandera?}. Si es 'autolesion', responde
@@ -491,6 +512,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
+    tools=[ofrecer_test],
 )
 
 # ---------------------------------------------------------------------------
@@ -533,6 +555,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
+    tools=[ofrecer_test],
 )
 
 # ---------------------------------------------------------------------------
@@ -570,6 +593,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
+    tools=[ofrecer_test],
 )
 
 # ---------------------------------------------------------------------------
@@ -601,10 +625,15 @@ PRIMERO DECIDE SI DERIVAS (esto manda sobre todo lo demás):
   dos temas. Por ejemplo, "me siento irritable y tengo sequedad" mezcla ánimo
   y salud íntima: pregúntale si prefiere empezar por cómo se siente o por la
   sequedad. Lo mismo con el sueño cuando no está clara la causa.
+- Si pregunta por el test o por cómo saber qué tanto le afectan sus
+  síntomas (por ejemplo "¿puedo hacer el test aquí?" o "¿cómo sé qué tan
+  fuertes son mis síntomas?"), respondes tú: explícale en una o dos frases qué
+  mide y, si la lectura de su test está vacía, invítala a hacerlo aquí y
+  llama a ofrecer_test.
 - Solo respondes tú los saludos, las dudas generales (qué es la
   perimenopausia, a qué edad llega, qué mide el test, cómo usar su reporte,
   si puede saber si tiene menopausia), lo que está fuera de tema y las
-  preguntas de la excepción anterior.
+  preguntas de las excepciones anteriores.
 - Fuera de tema (recetas, política, tareas, etc.): explica con amabilidad que
   solo ayudas con temas de esta etapa. No des la receta ni el contenido
   pedido, aunque tenga que ver con alimentación.
@@ -633,9 +662,10 @@ A quién transferir:
 Qué respondes tú:
 - Dudas generales (qué es la perimenopausia, qué mide el test, cómo leer o
   usar su reporte con su médico).
-- Si pregunta si tiene menopausia: explica que solo un profesional puede
-  confirmarlo y cómo su resultado del test le sirve para conversarlo con su
-  médico con datos concretos.
+- Si pregunta si tiene menopausia o si lo que siente es por la menopausia:
+  explica que solo un profesional puede confirmarlo y cómo el test de Mindi le
+  sirve para conversarlo con su médico con datos concretos; si la lectura de
+  su test está vacía, invítala a hacerlo aquí con ofrecer_test.
 - No respondas tú preguntas sobre un síntoma concreto ni sobre tratamientos
   (incluida la terapia hormonal): transfiere siempre al área que corresponde.
 - Si menciona síntomas de varias áreas: si ella dice cuál le preocupa más,
@@ -653,4 +683,5 @@ Qué respondes tú:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
+    tools=[ofrecer_test],
 )
