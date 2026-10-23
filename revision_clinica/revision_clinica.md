@@ -1005,3 +1005,18 @@ La guía AETSA 2015 solo asocia de forma consistente los bochornos y los síntom
 vaginales; la del HNHU sí relaciona los demás con esta etapa (ver la pregunta (c)).
 ¿Les parece adecuada la redacción de esas tres notas, o debe cambiar según la
 postura que decidan? ¿Hay alguna nota que deba corregirse o quitarse?
+
+### Glosario del chat: perimenopausia y postmenopausia
+
+> **Versión provisional, pendiente de validación médica.**
+
+En el test, la pregunta sobre la regla tiene un ícono ⓘ que explica estos
+términos. Siguen la definición clínica que ya usa la nota de etapa del reporte
+(HNHU 6.2.1):
+
+| Término | Texto que ve la usuaria |
+| --- | --- |
+| Perimenopausia | Es la transición hacia la menopausia: la regla empieza a variar y pueden aparecer síntomas. Dura hasta un año después de la última regla. |
+| Postmenopausia | Es la etapa que empieza cuando ya pasaron 12 meses seguidos sin regla. |
+
+¿Les parecen correctas y claras estas definiciones?

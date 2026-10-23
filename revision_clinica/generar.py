@@ -317,8 +317,18 @@ NOTAS_REPORTE = [
 ]
 
 
+# Glosario del chat de la web: MISMO texto que Mindi, src/glosario.js.
+GLOSARIO_ETAPAS = [
+    ("Perimenopausia", "Es la transición hacia la menopausia: la regla empieza a "
+     "variar y pueden aparecer síntomas. Dura hasta un año después de la última regla."),
+    ("Postmenopausia", "Es la etapa que empieza cuando ya pasaron 12 meses seguidos "
+     "sin regla."),
+]
+
+
 def seccion_notas_reporte() -> str:
     filas = "\n".join(f"| {sintoma} | {texto} |" for sintoma, texto in NOTAS_REPORTE)
+    filas_glosario = "\n".join(f"| {termino} | {texto} |" for termino, texto in GLOSARIO_ETAPAS)
     return f"""## 6. Notas del reporte web: "Por qué puede pasarte"
 
 > **Versión provisional, pendiente de validación médica.** Estos textos ya se
@@ -345,6 +355,20 @@ La guía AETSA 2015 solo asocia de forma consistente los bochornos y los síntom
 vaginales; la del HNHU sí relaciona los demás con esta etapa (ver la pregunta (c)).
 ¿Les parece adecuada la redacción de esas tres notas, o debe cambiar según la
 postura que decidan? ¿Hay alguna nota que deba corregirse o quitarse?
+
+### Glosario del chat: perimenopausia y postmenopausia
+
+> **Versión provisional, pendiente de validación médica.**
+
+En el test, la pregunta sobre la regla tiene un ícono ⓘ que explica estos
+términos. Siguen la definición clínica que ya usa la nota de etapa del reporte
+(HNHU 6.2.1):
+
+| Término | Texto que ve la usuaria |
+| --- | --- |
+{filas_glosario}
+
+¿Les parecen correctas y claras estas definiciones?
 """
 
 
