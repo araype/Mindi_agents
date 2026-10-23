@@ -220,6 +220,37 @@ SUBESCALAS_MRS = {
 }
 
 
+# Recomendación de ir al médico que la usuaria ya vio en su resultado del test.
+# MISMO texto que la web (Mindi, supabase/functions/_shared/mrs.js,
+# DOCTOR_RECOMMENDATION): si se cambia allá, se cambia aquí. Pendiente de
+# validar con el equipo médico.
+RECOMENDACION_MEDICO = {
+    "A": "Puedes comentarlo en tu próximo control ginecológico.",
+    "B": (
+        "Te recomendamos agendar una consulta con tu ginecóloga u obstetra en "
+        "las próximas semanas. Lleva tu reporte."
+    ),
+    "C": "Te recomendamos consultar pronto con un especialista. Lleva tu reporte.",
+    "alerta": (
+        "Por las señales que marcaste, agenda una cita ginecológica lo antes "
+        "posible. Lleva tu reporte."
+    ),
+}
+
+
+def nivel_test(resultado: dict, alteradas: list) -> str:
+    """Nivel del test con la misma regla que la web (computeLevel en mrs.js).
+
+    C: total 15 o más. B: total 8 o más, o cualquier parte en su corte. A: el resto.
+    """
+    total = resultado.get("total")
+    if _es_puntaje(total, 44) and total >= 15:
+        return "C"
+    if (_es_puntaje(total, 44) and total >= 8) or alteradas:
+        return "B"
+    return "A"
+
+
 def _es_puntaje(valor, maximo: int) -> bool:
     return (
         isinstance(valor, (int, float))
@@ -252,11 +283,12 @@ def lectura_mrs(resultado) -> Optional[str]:
     total = resultado.get("total")
     if _es_puntaje(total, 44):
         if total >= 15:
-            nivel = "nivel alto (15 o más), conviene una consulta pronto"
+            nivel = "en el rango en que la guía considera el tratamiento muy recomendable (15 o más)"
         elif total >= 8:
             nivel = "nivel en el que la guía sugiere evaluación médica (8 o más)"
         else:
-            nivel = "por debajo de los puntos de corte de la guía (menos de 8)"
+            # Solo el total: una parte puede estar en su corte aunque el total no.
+            nivel = "el total no llega al punto de corte (menos de 8)"
         partes.append(f"total {total} de 44, {nivel}")
 
     if alteradas:
@@ -269,6 +301,14 @@ def lectura_mrs(resultado) -> Optional[str]:
 
     if any(nombre == "psicologico" for _, nombre, _, _ in alteradas):
         partes.append("la guía sugiere evaluación en salud mental")
+
+    # La recomendación que ya vio en su resultado, para no contradecirla.
+    if resultado.get("senal_alerta") is True:
+        partes.append("marcó una señal de alerta en el test")
+        clave = "alerta"
+    else:
+        clave = nivel_test(resultado, alteradas)
+    partes.append(f'recomendación que vio en su resultado: "{RECOMENDACION_MEDICO[clave]}"')
 
     return "; ".join(partes)
 
@@ -346,7 +386,9 @@ REGLAS_COMUNES = """
 - Lectura de su test MRS: {lectura_mrs?}. Si hay lectura, úsala para
   contextualizar sin recitar números ni usar términos internos ("área",
   "subescala", "alterada", el nombre de un agente); si está vacía, invita a
-  hacer el test cuando sea pertinente.
+  hacer el test cuando sea pertinente. Si trae la recomendación que vio en
+  su resultado, no la contradigas: si habla de ir al médico, repítela con
+  tus palabras.
 - Si viene al caso, menciona en palabras simples qué área salió más alta en
   su test, sin dar números ni etiquetas de gravedad.
 - Alerta reciente del filtro: {ultima_bandera?}. Si es 'autolesion', responde
