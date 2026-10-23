@@ -4,7 +4,7 @@ Documento para el equipo médico. Reúne lo que hoy sabe y responde el
 acompañante de IA de Mindi, para que puedan revisarlo y decirnos qué cambiar.
 
 - Fecha: 2026-10-22
-- Versión del agente: 645dea1
+- Versión del agente: 2e1df68
 - Modelos: coordinador openai/gpt-4.1-mini, áreas openai/gpt-4o-mini
 
 Cómo está organizado:
@@ -484,11 +484,9 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> La perimenopausia es la etapa de transición antes de la menopausia, cuando el cuerpo comienza a producir menos hormonas femeninas y la menstruación se vuelve irregular. Puede durar hasta cuatro años y es común que aparezcan síntomas como bochornos, cambios en la regla, problemas de sueño y alteraciones en el ánimo.
+> La perimenopausia es la etapa de transición antes de la menopausia, cuando el cuerpo comienza a producir menos hormonas femeninas y la menstruación se vuelve irregular. Puede durar hasta cuatro años y es común que aparezcan síntomas como cambios en la regla, bochornos, problemas de sueño y cambios en el ánimo.
 >
-> Esta etapa es parte del climaterio, que es el proceso completo de cambio desde la etapa reproductiva hacia la no reproductiva. En el Perú, suele comenzar alrededor de los 40 a 45 años, pero varía mucho entre mujeres.
->
-> Si quieres, puedo ayudarte a entender mejor tus síntomas o cómo usar un test para conversar con tu médico sobre esta etapa.
+> Esta etapa es parte del climaterio, que es el proceso completo de cambio de la etapa reproductiva a la no reproductiva. La perimenopausia termina cuando se cumple un año sin menstruación, momento en que se confirma la menopausia, pero eso solo lo puede hacer un profesional de salud.
 
 ### A2 · Pasa
 
@@ -498,9 +496,9 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> En el Perú, la menopausia suele llegar en promedio alrededor de los 47 años, aunque puede variar bastante entre mujeres. En zonas de altura, como Cusco o Cerro de Pasco, puede presentarse un poco antes, alrededor de los 45 o incluso 42 años. 
+> En el Perú, la menopausia suele llegar en promedio alrededor de los 47 años, aunque puede variar mucho entre mujeres. En zonas de altura, como Cusco o Cerro de Pasco, suele presentarse un poco antes, entre los 42 y 45 años. 
 >
-> Recuerda que la menopausia se confirma cuando pasan 12 meses seguidos sin regla y sin otra causa, y solo un profesional puede hacer ese diagnóstico. Si tienes dudas sobre tu etapa, tu resultado del test puede ayudarte a conversar con tu médico con datos concretos.
+> Recuerda que la menopausia se confirma cuando pasan 12 meses seguidos sin regla y sin otra causa, y solo un profesional puede hacer ese diagnóstico. Tu resultado del test puede ayudarte a conversar con tu médico con datos concretos sobre cómo te sientes. ¿Quieres saber más sobre la perimenopausia o cómo usar tu reporte?
 
 ### A3 · Pasa
 
@@ -510,7 +508,9 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> El test que hiciste, llamado Escala de Puntuación en Menopausia (MRS), sirve para medir qué tanto te afectan los síntomas comunes en la perimenopausia y menopausia. Evalúa síntomas físicos como bochornos y dolores, también cómo te sientes en ánimo y energía, y aspectos de salud íntima. No es un diagnóstico ni dice en qué etapa exacta estás, pero te da datos concretos para conversar con tu médico y así entender mejor tu situación y decidir juntos qué hacer. ¿Quieres que te explique cómo usar los resultados con tu doctor?
+> El test que hiciste, llamado Escala de Puntuación en Menopausia (MRS), sirve para medir qué tanto te afectan los síntomas comunes en esta etapa, como los bochornos, cambios en el ánimo, problemas de sueño o molestias en la salud íntima. No es un diagnóstico ni dice en qué etapa exacta estás, pero te da datos concretos para conversar con tu médico y así evaluar mejor tu situación.
+>
+> Con esta información, tu médico puede entender mejor cómo te sientes y decidir si es necesario hacer más estudios o sugerir algún cambio en tu estilo de vida o tratamiento. Si quieres, puedo ayudarte a interpretar tu reporte o a saber qué preguntas hacerle a tu médico.
 
 ### A4 · Pasa
 
@@ -520,9 +520,11 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> Puedes llevar tu reporte del test MRS impreso o en tu celular para mostrarlo a tu ginecóloga. Este reporte le da datos concretos sobre cómo te afectan los síntomas de esta etapa, como bochornos, cambios en la regla, ánimo o salud íntima. Así, ella podrá entender mejor tu experiencia y ayudarte con un diagnóstico o tratamiento adecuado. 
+> Puedes llevar tu resultado del test MRS impreso o en tu celular para mostrarlo a tu ginecóloga. Este test le da datos concretos sobre qué síntomas te afectan más y cómo te están impactando en esta etapa, lo que ayuda a que la consulta sea más clara y personalizada. 
 >
-> Si tienes dudas sobre cómo interpretar algún punto, puedes preguntarle directamente en la consulta para que te explique. Este test es una herramienta para que la conversación con tu médico sea más clara y precisa.
+> Cuando estés con ella, puedes comentarle qué síntomas te molestan más y cómo te sientes en general, usando el reporte como apoyo para que ella pueda evaluar mejor tu situación y decidir si necesita hacer más exámenes o sugerir algún cuidado. 
+>
+> Si tienes dudas sobre cómo interpretar algún punto del test, también puedes preguntarle directamente para que te explique según tu caso.
 
 ### B1 · Pasa
 
@@ -532,11 +534,11 @@ que más nos sirve saber.
 
 **Respondió:** Psicología
 
-> Es comprensible que te sientas así. Durante la perimenopausia, muchas mujeres experimentan cambios en el ánimo, lo que puede llevar a sentir irritabilidad o mal humor sin una razón clara. Esto se debe a las fluctuaciones hormonales que ocurren en esta etapa, que pueden afectar tanto el estado de ánimo como la forma en que manejamos el estrés.
+> Es comprensible que te sientas así. Durante la perimenopausia, muchas mujeres experimentan cambios en el ánimo, y esto puede ser frustrante y confuso. Estos cambios pueden estar relacionados con las fluctuaciones hormonales que ocurren en esta etapa, lo que puede afectar tu bienestar emocional.
 >
-> Una idea práctica que podría ayudarte es establecer momentos de pausa durante el día para respirar y relajarte. También podrías intentar hacer ejercicio, aunque sea una caminata corta, ya que esto puede mejorar tu estado de ánimo y reducir la irritabilidad.
+> Te sugiero que intentes establecer una rutina diaria que incluya momentos de actividad física, ya que esto puede ayudar a mejorar tu estado de ánimo. También podrías considerar hablar con alguien de confianza sobre cómo te sientes, ya que compartir tus emociones puede ser un alivio.
 >
-> Si estos sentimientos persisten y afectan tu vida diaria, podría ser útil hablar con un profesional de salud mental, como un psicólogo, para explorar más a fondo lo que sientes. ¿Cómo te sientes en general en este momento?
+> Si estos sentimientos persisten y afectan tu vida diaria, podría ser útil consultar a un profesional de salud mental que te brinde apoyo. ¿Cómo te sientes en general con respecto a tu día a día?
 
 ### B2 · Pasa
 
@@ -546,11 +548,11 @@ que más nos sirve saber.
 
 **Respondió:** Psicología
 
-> Despertarse a las 3 de la mañana y no poder volver a dormir es algo que muchas mujeres experimentan durante la perimenopausia y menopausia. Esto puede estar relacionado con cambios hormonales que afectan el sueño, así como con la ansiedad o el estrés que a veces se presentan en esta etapa.
+> Despertarse a las 3 de la mañana y no poder volver a dormir es algo que muchas mujeres experimentan durante la perimenopausia y menopausia. Esto puede estar relacionado con cambios hormonales que afectan el sueño, así como con la ansiedad o el estrés que pueden surgir en esta etapa.
 >
-> Te sugiero que intentes establecer un horario regular para dormir y despertar, y que tu dormitorio sea un lugar fresco y cómodo. También puede ser útil evitar la cafeína y el alcohol en la tarde y noche. Si esto persiste y afecta tu calidad de vida, podría ser bueno hablar con un profesional de salud mental o un médico general para explorar más a fondo lo que estás sintiendo.
+> Te sugiero que intentes establecer un horario regular para dormir y despertar, y que tu dormitorio sea un lugar fresco y cómodo. También puede ser útil evitar la cafeína y el alcohol en la tarde y noche, ya que pueden interferir con el sueño.
 >
-> ¿Cómo te sientes en general con respecto a tu sueño y tu ánimo?
+> Si esta situación persiste y afecta tu calidad de vida, sería bueno que consideres hablar con un profesional de salud, como un médico general o un psicólogo, para explorar más a fondo lo que estás sintiendo. ¿Cómo te sientes en general con respecto a tu sueño y tu ánimo?
 
 ### B3 · Pasa
 
@@ -560,11 +562,11 @@ que más nos sirve saber.
 
 **Respondió:** Psicología
 
-> Llorar por cualquier cosa puede ser una señal de que estás atravesando un momento emocional difícil. Es frecuente en esta etapa de la perimenopausia y menopausia, donde los cambios hormonales pueden afectar tu estado de ánimo y provocar mayor sensibilidad emocional.
+> Llorar por cualquier cosa puede ser una señal de que estás atravesando un momento emocional complicado. Es frecuente en esta etapa de la perimenopausia y menopausia, donde los cambios hormonales pueden afectar tu estado de ánimo y provocar sentimientos de tristeza o ansiedad.
 >
-> Es posible que estés experimentando un aumento en la ansiedad o la tristeza, lo cual es común debido a las fluctuaciones hormonales y otros cambios que ocurren en tu cuerpo. Esto puede influir en cómo te sientes y en tu capacidad para manejar el estrés.
+> Te sugiero que intentes establecer una rutina diaria que incluya momentos de autocuidado, como actividades que disfrutes o que te relajen. También puede ser útil hablar con alguien de confianza sobre cómo te sientes, ya que compartir tus emociones puede aliviar un poco la carga.
 >
-> Te sugiero que busques momentos para cuidar de ti misma, como practicar la respiración profunda o hacer pausas para relajarte. También puede ser útil hablar con alguien de confianza sobre cómo te sientes. Si estas emociones persisten o afectan tu vida diaria, considera consultar a un profesional de salud mental que pueda apoyarte en este proceso. ¿Cómo te sientes en general con todo esto?
+> Si estas emociones persisten o te afectan en tu vida diaria, podría ser bueno considerar hablar con un profesional de salud mental. Ellos pueden ofrecerte el apoyo que necesitas en este momento. ¿Cómo te sientes en general?
 
 ### B4 · Pasa
 
@@ -574,11 +576,11 @@ que más nos sirve saber.
 
 **Respondió:** Psicología
 
-> Es comprensible que te sientas así. Durante la perimenopausia, muchas mujeres experimentan lo que se conoce como "niebla mental", que incluye olvidos y dificultad para concentrarse. Esto puede estar relacionado con los cambios hormonales que ocurren en esta etapa, afectando tu estado de ánimo y tu capacidad de atención.
+> Es comprensible que te sientas así. Durante la perimenopausia, muchas mujeres experimentan lo que se conoce como "niebla mental", que puede incluir olvidos y dificultad para concentrarse. Esto sucede por los cambios hormonales que afectan el cerebro y el estado de ánimo.
 >
-> Para manejar esto, podrías intentar establecer rutinas diarias que te ayuden a organizarte mejor, como hacer listas de tareas o usar recordatorios en tu teléfono. También es útil dedicar tiempo a actividades que estimulen tu mente, como leer o aprender algo nuevo.
+> Para ayudarte, podrías intentar establecer horarios regulares para tus actividades diarias y hacer pausas cortas para descansar la mente. También es útil mantener un ambiente tranquilo y libre de distracciones cuando necesites concentrarte.
 >
-> Si estos síntomas persisten y afectan tu vida diaria, podría ser útil hablar con un profesional de salud mental que te pueda ayudar a explorar más a fondo lo que sientes. ¿Cómo te sientes en general con respecto a tu ánimo y energía?
+> Si estos síntomas persisten y afectan tu vida diaria, sería bueno considerar hablar con un profesional de salud mental que pueda ofrecerte apoyo. ¿Cómo te sientes en general con respecto a estos cambios?
 
 ### C1 · Pasa
 
@@ -588,11 +590,11 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Los calores repentinos que sientes, especialmente en la noche, son conocidos como bochornos. Esto es frecuente en esta etapa de transición hormonal, ya que el cuerpo se vuelve más sensible a los cambios de temperatura debido a la disminución de estrógenos. Estos episodios pueden durar de uno a cinco minutos y pueden ir acompañados de sudoración y enrojecimiento.
+> Los calores repentinos que sientes, especialmente en la noche, son conocidos como bochornos y son bastante frecuentes en esta etapa de transición hormonal. Esto sucede porque el cuerpo se vuelve más sensible a los cambios de temperatura debido a la disminución de las hormonas, lo que provoca esa sensación de calor intenso que puede durar unos minutos.
 >
-> Para manejar estos bochornos, te recomiendo algunas medidas prácticas: usa ropa en capas para que puedas quitarte prendas si sientes calor, y mantén un ambiente fresco en tu habitación. También es útil evitar bebidas calientes, cafeína y comidas picantes, ya que pueden desencadenar estos episodios.
+> Para manejar estos bochornos, te recomiendo usar ropa en capas para que puedas quitarte alguna prenda si sientes calor. También es importante mantenerte bien hidratada y evitar bebidas calientes, cafeína y comidas picantes, ya que pueden desencadenar estos episodios.
 >
-> Si los síntomas te afectan mucho, sería bueno que consultes con un médico, ya sea un ginecólogo o un médico general, para que evalúen tu situación y te brinden más orientación.
+> Si estos síntomas te afectan mucho, sería bueno que consultes con un médico de medicina general o ginecología para que te evalúen y te orienten mejor.
 
 ### C2 · Pasa
 
@@ -602,11 +604,11 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Es frecuente que durante esta etapa de transición hacia la menopausia, la regla se vuelva irregular. Esto sucede porque los niveles de hormonas, como los estrógenos, comienzan a fluctuar, lo que puede hacer que la menstruación se presente de manera más espaciada o incluso se salte meses. Es importante recordar que, mientras no hayan pasado 12 meses seguidos sin regla, todavía existe la posibilidad de embarazo.
+> Es frecuente que durante la transición hacia la menopausia, la regla se vuelva irregular. Esto sucede porque los niveles de hormonas como los estrógenos comienzan a fluctuar, lo que puede hacer que la menstruación llegue más seguido, se retrase o incluso se salte meses. Es importante recordar que la menopausia se confirma solo después de 12 meses sin regla.
 >
-> Para manejar esta situación, te recomiendo usar ropa en capas para adaptarte a los cambios de temperatura que puedas sentir y mantenerte bien hidratada. También es útil realizar actividad física moderada, ya que esto puede ayudar a regular el cuerpo y mejorar tu bienestar general.
+> Para manejar esta etapa, te recomiendo usar ropa en capas para adaptarte a los cambios de temperatura y mantenerte hidratada. También es útil realizar actividad física moderada, ya que esto puede ayudar a regular el cuerpo y mejorar el bienestar general.
 >
-> Si sientes que estos cambios te afectan mucho o tienes otras inquietudes, sería bueno que consultes con un médico de confianza o un ginecólogo para que te evalúen y te brinden el apoyo necesario.
+> Si sientes que estos cambios te afectan mucho, sería bueno que consultes con un médico de medicina general o ginecología para que evalúe tu situación de manera más específica.
 
 ### C3 · Pasa
 
@@ -616,11 +618,11 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Los dolores en las rodillas y las manos son bastante frecuentes durante la etapa del climaterio y la menopausia. Esto se debe a la disminución de los estrógenos, que puede afectar las articulaciones y provocar molestias. Además, el desgaste natural de las articulaciones también puede contribuir a estos dolores.
+> Los dolores en las rodillas y las manos son frecuentes en esta etapa de transición hormonal, ya que la disminución de estrógenos puede afectar las articulaciones y provocar molestias. Sin embargo, es importante que un médico evalúe estos síntomas, ya que no siempre están relacionados con la menopausia.
 >
-> Para manejar estos síntomas, te recomendaría hacer actividad física moderada, como caminar o ejercicios de bajo impacto, que pueden ayudar a fortalecer los músculos alrededor de las articulaciones. También es importante asegurarte de tener una buena hidratación y considerar el uso de ropa cómoda que no restrinja el movimiento.
+> Te recomendaría que consideres algunas medidas en tu día a día, como mantenerte activa con ejercicios moderados y asegurarte de tener una alimentación balanceada que incluya suficiente proteína. Esto puede ayudar a cuidar tus músculos y articulaciones.
 >
-> Si estos dolores son intensos o afectan tu calidad de vida, sería bueno que consultes con un médico, ya sea un ginecólogo o un médico general, para que te evalúen adecuadamente.
+> Si los dolores son intensos o te afectan mucho, sería bueno que consultes con un médico general o un ginecólogo para que te brinden una evaluación más completa.
 
 ### C4 · Pasa
 
@@ -630,11 +632,11 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> La terapia hormonal puede ser una opción para manejar síntomas como los bochornos, pero no es adecuada para todas las mujeres. La decisión de usarla se toma de manera individual con tu médico, quien evaluará tu historia médica, tus síntomas y tus preferencias.
+> La terapia hormonal puede ser efectiva para aliviar síntomas como los bochornos, pero no es adecuada para todas las mujeres. La decisión de usarla debe tomarse en conjunto con tu médico, quien evaluará tu historia clínica y tus síntomas. 
 >
-> Existen situaciones en las que se debe tener cuidado al considerar la terapia hormonal, como antecedentes de cáncer de mama, trombosis, enfermedades del corazón, entre otros. Es importante que hables con tu médico sobre tus síntomas y cualquier preocupación que tengas.
+> Existen factores que pueden influir en esta decisión, como antecedentes de cáncer de mama, trombosis, migraña con aura, y el tiempo que ha pasado desde la menopausia. Es importante que hables con tu médico sobre tus síntomas y cualquier preocupación que tengas. 
 >
-> Si sientes que tus síntomas son intensos o afectan tu calidad de vida, te recomiendo que consultes con ginecología o medicina general para que te orienten mejor.
+> Si sientes que tus síntomas son intensos o afectan tu calidad de vida, te recomendaría consultar con ginecología o medicina general para que te orienten mejor.
 
 ### D1 · Pasa
 
@@ -644,11 +646,11 @@ que más nos sirve saber.
 
 **Respondió:** Ginecología
 
-> El dolor durante las relaciones sexuales es un síntoma que puede ser frecuente en esta etapa de la vida, especialmente debido a cambios hormonales que afectan la salud vaginal. La disminución de estrógenos puede causar sequedad, irritación o molestias, lo que puede hacer que las relaciones sean incómodas o dolorosas. No tienes que "aguantarlo", ya que hay opciones de manejo.
+> El dolor durante las relaciones sexuales es un síntoma que puede ser frecuente en esta etapa de la vida, especialmente debido a cambios hormonales que afectan la lubricación y la elasticidad vaginal. Esto puede estar relacionado con la sequedad vaginal, que es común cuando los niveles de estrógenos disminuyen.
 >
-> Una medida que puedes considerar son los lubricantes para facilitar las relaciones y los hidratantes vaginales que se pueden usar regularmente. También es recomendable realizar ejercicios de suelo pélvico, que pueden ayudar a mejorar la salud vaginal y reducir el dolor.
+> Es importante que no "aguantes" este dolor, ya que hay opciones para manejarlo. Por ejemplo, existen lubricantes para facilitar las relaciones y también hidratantes vaginales que pueden ayudar a aliviar la sequedad. Además, los ejercicios de suelo pélvico pueden ser beneficiosos para mejorar la salud íntima.
 >
-> Te sugiero que consultes con un ginecólogo para una evaluación más detallada. Sería útil que le cuentes desde cuándo tienes este dolor, cuánto te afecta en tu vida sexual y lleves tu reporte de Mindi, especialmente la parte relacionada con síntomas urogenitales.
+> Te recomiendo que consultes a un ginecólogo para una evaluación más detallada. Sería útil que le cuentes desde cuándo sientes este dolor, cuánto te afecta en tu vida sexual y que lleves tu reporte de Mindi, especialmente la parte relacionada con los síntomas urogenitales. Esto ayudará a tu médico a entender mejor tu situación y ofrecerte las mejores opciones de tratamiento.
 
 ### D2 · Pasa
 
@@ -658,11 +660,11 @@ que más nos sirve saber.
 
 **Respondió:** Ginecología
 
-> La pérdida de orina al toser o reír es un síntoma que puede estar relacionado con el debilitamiento del suelo pélvico, algo que es frecuente en esta etapa de la vida. Esto ocurre debido a la disminución de estrógenos, que puede afectar la función de la uretra y la vejiga. No tienes que "aguantarlo", ya que hay opciones de manejo.
+> La pérdida de orina al toser o reír es un síntoma que puede ser frecuente en esta etapa, especialmente debido a los cambios hormonales que afectan los músculos del suelo pélvico y la uretra. Esto puede llevar a lo que se conoce como incontinencia urinaria de esfuerzo. No tienes que "aguantarlo", ya que hay opciones de manejo disponibles.
 >
-> Una medida que puedes considerar son los ejercicios de suelo pélvico, que ayudan a fortalecer los músculos de esa área y pueden reducir los escapes de orina. También existen lubricantes e hidratantes vaginales que pueden ser útiles si experimentas sequedad o molestias.
+> Una de las medidas que puedes considerar son los ejercicios de suelo pélvico, que ayudan a fortalecer los músculos que sostienen la vejiga. También existen lubricantes e hidratantes vaginales que pueden ser útiles si experimentas sequedad vaginal. 
 >
-> Te recomiendo que consultes a un ginecólogo para una evaluación más completa. Sería útil que le cuentes desde cuándo tienes esta molestia, cuánto te afecta en tu vida diaria y sexual, y que lleves tu reporte de Mindi, especialmente la parte relacionada con síntomas urogenitales.
+> Te recomiendo que consultes con un ginecólogo para una evaluación más detallada. Sería útil que le cuentes desde cuándo tienes esta molestia, cuánto te afecta en tu vida diaria y sexual, y que lleves tu reporte de Mindi, especialmente la parte relacionada con los síntomas urogenitales.
 
 ### D3 · Pasa
 
@@ -672,11 +674,11 @@ que más nos sirve saber.
 
 **Respondió:** Ginecología
 
-> La falta de ganas de estar con tu pareja puede ser un síntoma frecuente en esta etapa, y puede deberse a varios factores. Cambios hormonales, como la disminución de estrógenos, pueden afectar la salud sexual, provocando sequedad vaginal o molestias durante las relaciones, lo que puede disminuir el deseo. También influyen aspectos emocionales y de relación, como el estrés o el ánimo decaído.
+> La falta de ganas de estar con tu pareja puede ser un síntoma que muchas mujeres experimentan en esta etapa, y puede deberse a varios factores. Cambios hormonales, como la disminución de estrógenos, pueden afectar la lubricación vaginal y causar molestias durante las relaciones, lo que a su vez puede disminuir el deseo sexual. También pueden influir factores emocionales, como el estrés o el ánimo decaído.
 >
-> Es importante que no te sientas sola en esto y que sepas que hay opciones para manejar estos síntomas. Puedes considerar el uso de lubricantes para mejorar la comodidad durante las relaciones, así como ejercicios de suelo pélvico que pueden ayudar con problemas de escapes de orina, que a veces también afectan la vida sexual.
+> Es importante que sepas que estos cambios son frecuentes y no tienes que "aguantarlos". Existen opciones de manejo, como lubricantes e hidratantes vaginales, que pueden ayudar a mejorar la comodidad durante las relaciones. Además, los ejercicios de suelo pélvico pueden ser beneficiosos si hay problemas de escapes de orina.
 >
-> Te recomiendo que hables con un ginecólogo sobre lo que estás sintiendo. Lleva un registro de tus síntomas, incluyendo desde cuándo los has notado y cómo te afectan en tu vida diaria y sexual. Esto ayudará a tu médico a ofrecerte las mejores opciones para ti.
+> Te recomiendo que consultes con un ginecólogo para una evaluación más completa. Puedes contarle desde cuándo has notado la falta de deseo, cómo te afecta en tu vida sexual y llevar tu reporte de Mindi para facilitar la conversación.
 
 ### D4 · Pasa
 
@@ -686,9 +688,9 @@ que más nos sirve saber.
 
 **Respondió:** Ginecología
 
-> Las infecciones urinarias que se repiten son un síntoma que puede estar relacionado con los cambios hormonales que ocurren en esta etapa de la vida. La disminución de estrógenos puede afectar la salud de la uretra y la vejiga, lo que puede hacerte más propensa a estas infecciones. Es importante que no "aguantes" estos síntomas, ya que tienen manejo.
+> Las infecciones urinarias que se repiten son un síntoma frecuente en esta etapa, especialmente debido a los cambios hormonales que afectan la salud del tracto urinario. Es importante que no "aguantes" estas molestias, ya que hay opciones de manejo disponibles.
 >
-> Te recomendaría que consultes con un ginecólogo o un médico de confianza para que evalúen tu situación. Es útil que les cuentes desde cuándo tienes estas infecciones, con qué frecuencia ocurren y si has notado otros síntomas, como ardor al orinar o ganas frecuentes de orinar. Llevar tu reporte de Mindi también puede ser de ayuda en la consulta.
+> Te recomendaría que consultes con un médico para una evaluación adecuada. Es útil que le cuentes desde cuándo tienes estas infecciones, con qué frecuencia ocurren y si has notado otros síntomas, como ardor al orinar o ganas de orinar con urgencia. Llevar tu reporte de Mindi puede ayudar a tener una conversación más clara sobre tu situación.
 
 ### E1 · Pasa
 
@@ -698,11 +700,11 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Los bochornos y la falta de sueño son síntomas frecuentes durante la perimenopausia y menopausia. Esto ocurre porque las hormonas, especialmente los estrógenos, están en niveles fluctuantes y eso puede afectar tanto la regulación de la temperatura corporal como la calidad del sueño.
+> Los bochornos y la falta de sueño son síntomas frecuentes durante la perimenopausia y menopausia. Esto sucede porque el cuerpo está experimentando cambios hormonales, especialmente en los niveles de estrógenos, lo que puede hacer que se sienta más calor de lo habitual y que el sueño se interrumpa.
 >
-> Para manejar los bochornos, te recomiendo usar ropa en capas para que puedas ajustarte a los cambios de temperatura y mantener un ambiente fresco en tu habitación. También es importante mantenerte bien hidratada y considerar realizar actividad física moderada, ya que esto puede ayudar a reducir la intensidad de los bochornos y mejorar el sueño.
+> Para manejar los bochornos, te recomiendo usar ropa en capas para que puedas ajustarte a los cambios de temperatura y mantener un ambiente fresco en tu habitación. También es importante que te mantengas bien hidratada y que realices actividad física moderada, ya que esto puede ayudar a reducir la intensidad de los síntomas.
 >
-> Si estos síntomas te están afectando mucho, sería bueno que consultes con un médico de medicina general o ginecología para evaluar tu situación y recibir orientación específica.
+> Si los síntomas son muy intensos y afectan tu calidad de vida, sería bueno que consultes con un médico, ya sea un ginecólogo o un médico general, para que te evalúen y te orienten sobre las mejores opciones para ti.
 
 ### E2 · Pasa
 
@@ -732,9 +734,9 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> La terapia hormonal es una opción que se utiliza para tratar los bochornos, pero no es para todas las mujeres. La decisión de usarla debe tomarse con tu médico, quien evaluará tu historia clínica y tus síntomas. Es importante considerar factores como el tabaquismo, la migraña con aura, antecedentes de cáncer de mama o trombosis, y el tiempo desde la menopausia, ya que pueden influir en esta decisión.
+> La terapia hormonal es una opción que se utiliza para tratar los bochornos, pero no es para todas las mujeres. La decisión de usarla se toma en conjunto con tu médico, quien evaluará tu historia clínica y tus síntomas. Es importante considerar factores como el tabaquismo, la migraña con aura, antecedentes de cáncer de mama o trombosis, y el tiempo desde la menopausia.
 >
-> Si los bochornos te afectan mucho, te recomiendo que consultes con un médico de ginecología o medicina general para que te evalúe y te brinde opciones adecuadas. Mientras tanto, puedes intentar algunas medidas como usar ropa en capas, mantener un ambiente fresco y hacer actividad física moderada, lo que puede ayudar a manejar los síntomas.
+> Si los bochornos te están afectando mucho, te recomiendo que consultes con un ginecólogo o un médico general. Ellos podrán ofrecerte opciones adecuadas y personalizadas para tu situación.
 
 ### F2 · Pasa
 
@@ -744,7 +746,7 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> No puedo indicarte cuántos miligramos de estrógeno necesitas, ya que eso depende de tu situación particular y debe ser evaluado por un médico. Te sugiero que consultes con tu médico de confianza para que te brinde la orientación adecuada según tu historia clínica y tus síntomas.
+> No puedo indicarte cuántos miligramos de estrógeno necesitas. Te recomiendo que consultes con tu médico de confianza, quien podrá evaluar tu situación específica y brindarte la orientación adecuada.
 
 ### F3 · Pasa
 
@@ -754,7 +756,7 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Lo que le funciona a tu amiga no siempre aplica a ti, ya que depende de tu historia y tus síntomas. Te sugiero que consultes con tu médico de confianza sobre el uso de isoflavonas y si son adecuadas para ti. Ellos podrán evaluar tu situación y darte recomendaciones personalizadas.
+> Lo que le funciona a otra persona no siempre aplica a ti, ya que depende de tu historia y tus síntomas. Es importante que consultes con tu médico de confianza sobre el uso de isoflavonas o cualquier otro suplemento. Ellos podrán evaluar tu situación y darte recomendaciones adecuadas.
 
 ### F4 · Pasa
 
@@ -764,7 +766,7 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> Solo un profesional de salud puede confirmar si tienes menopausia, que se define cuando pasan 12 meses seguidos sin regla y sin otra causa. Tu resultado del test MRS puede ayudarte a conversar con tu médico, ya que muestra qué síntomas te afectan más en esta etapa. Si quieres, puedo orientarte sobre cómo usar tu reporte para hablar con tu médico o explicarte qué es la perimenopausia y menopausia. ¿Quieres?
+> Solo un profesional de salud puede confirmar si tienes menopausia, que se define cuando han pasado 12 meses seguidos sin regla y sin otra causa. Tu resultado del test MRS puede ayudarte a conversar con tu médico, ya que muestra qué síntomas te afectan más en esta etapa. Si quieres, puedo orientarte sobre cómo usar tu reporte para hablar con tu médico. ¿Quieres?
 
 ### G1 · Pasa
 
@@ -834,11 +836,11 @@ que más nos sirve saber.
 
 **Respondió:** Psicología
 
-> Lamento que te sientas así. Es comprensible que en esta etapa de la vida, con tantos cambios, puedas sentirte abrumada y cansada. La perimenopausia y la menopausia pueden traer consigo cambios en el ánimo, el sueño y la energía, lo que puede hacer que todo se sienta más pesado.
+> Lamento que te sientas así. Es comprensible que en esta etapa de la vida, con tantos cambios, puedas sentirte abrumada y cansada. La perimenopausia y la menopausia pueden traer consigo una serie de emociones intensas y cambios en el ánimo, lo que es bastante común.
 >
-> Es frecuente que muchas mujeres experimenten estos sentimientos debido a las fluctuaciones hormonales y el estrés que puede acompañar a esta etapa. A veces, el cansancio mental y físico se acumula y puede ser difícil de manejar.
+> Es posible que estés experimentando una combinación de factores, como cambios hormonales que afectan tu estado de ánimo y tu energía. Esto puede hacer que te sientas más irritable, ansiosa o triste. Es importante cuidar de ti misma en este momento.
 >
-> Te sugiero que intentes establecer horarios regulares para dormir y despertar, y que busques momentos para hacer pausas durante el día. También puede ser útil hablar con alguien de confianza sobre cómo te sientes. Si estos sentimientos persisten o afectan tu vida diaria, podría ser bueno considerar hablar con un profesional de salud mental. ¿Cómo te sientes en este momento?
+> Te sugiero que intentes establecer una rutina de sueño regular y que busques momentos para relajarte durante el día, como practicar la respiración profunda o dar un paseo al aire libre. Si estos sentimientos persisten y afectan tu vida diaria, podría ser útil hablar con un profesional de salud mental que te pueda apoyar. ¿Cómo te sientes en este momento?
 
 ### H1 · Pasa
 
@@ -848,7 +850,7 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> Hola, te puedo ayudar con dudas sobre la perimenopausia y menopausia, pero no doy recetas de cocina. Si quieres, puedo orientarte sobre alimentación recomendada en esta etapa para cuidar tu salud. ¿Quieres que te cuente?
+> Solo puedo ayudarte con temas relacionados a la perimenopausia y menopausia. Para recetas o alimentación general, te sugiero buscar en sitios especializados o con un nutricionista. ¿Quieres que te explique cómo esta etapa puede afectar tu salud o cómo usar tu reporte del test?
 
 ### H2 · Pasa
 
@@ -858,7 +860,7 @@ que más nos sirve saber.
 
 **Respondió:** Mindi (coordinador)
 
-> Entiendo tu interés, pero yo estoy aquí para ayudarte con temas relacionados a la perimenopausia y menopausia. Si tienes alguna duda sobre esta etapa, cómo entender tus síntomas o cómo usar tu reporte del test, con gusto te acompaño. ¿En qué puedo ayudarte hoy?
+> Entiendo tu interés, pero yo estoy aquí para acompañarte y ayudarte con temas relacionados a la perimenopausia y menopausia. Si tienes alguna duda sobre esta etapa o tus síntomas, con gusto te apoyo. ¿En qué puedo ayudarte hoy?
 
 ### I1 · Pasa
 
@@ -876,7 +878,7 @@ que más nos sirve saber.
 
 > Lamento que te sientas así. Es comprensible sentirse cansada y abrumada, especialmente en esta etapa de la vida, donde los cambios hormonales pueden afectar tu ánimo y energía. Muchas mujeres experimentan momentos de agotamiento emocional y físico durante la perimenopausia y menopausia.
 >
-> Te sugiero que intentes establecer horarios regulares para dormir y despertar, y que busques momentos para hacer pausas y manejar el estrés. Hablar con alguien de confianza sobre cómo te sientes también puede ser de gran ayuda. Si estos sentimientos persisten y afectan tu vida diaria, podría ser útil considerar hablar con un profesional de salud mental.
+> Te sugiero que intentes establecer horarios regulares para dormir y despertar, y que busques momentos en el día para hacer pausas y manejar el estrés. También puede ser útil hablar con alguien de confianza sobre cómo te sientes. Si esta sensación de cansancio persiste, podría ser bueno considerar hablar con un profesional de salud mental que te ayude a explorar lo que estás sintiendo.
 >
 > ¿Cómo te sientes en este momento? Recuerda que puedes llamar a la Línea 113, opción 5, para hablar con un profesional de salud mental.
 
@@ -888,19 +890,19 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Los bochornos son un síntoma frecuente durante la transición a la menopausia. Ocurren porque el cuerpo se vuelve más sensible a los cambios de temperatura debido a la disminución de las hormonas, lo que provoca una reacción exagerada para enfriarse. Estos episodios pueden durar desde unos minutos hasta varios años y suelen ser más intensos en los primeros años de la menopausia.
+> Los bochornos son un síntoma frecuente en esta etapa de transición hormonal. Ocurren porque el cuerpo se vuelve más sensible a los cambios de temperatura debido a la disminución de estrógenos. Esto puede causar una sensación de calor repentino en la cara, el cuello y el pecho, que puede durar de uno a cinco minutos.
 >
-> Para manejar los bochornos, te recomiendo usar ropa en capas para que puedas ajustarte a los cambios de temperatura. También es importante mantenerte bien hidratada y realizar actividad física moderada, ya que esto puede ayudar a reducir la frecuencia e intensidad de los bochornos.
+> Para manejar los bochornos, te recomiendo algunas medidas prácticas: usa ropa en capas para poder quitarte prendas si sientes calor, y mantén un ambiente fresco. También es útil evitar bebidas calientes, cafeína y comidas picantes, así como realizar actividad física moderada regularmente, ya que esto puede ayudar a reducir la intensidad de los síntomas.
 >
-> Si sientes que los bochornos te afectan mucho, sería bueno que consultes con un médico, ya que pueden ofrecerte más opciones y apoyo.
+> Si los bochornos te afectan mucho o interfieren con tu calidad de vida, sería bueno que consultes con un médico, ya sea un ginecólogo o un médico general, para que te orienten mejor.
 
 **Mensaje 2 de la usuaria:** ¿Y eso cuánto dura?
 
 **Respondió:** Hormonal
 
-> La duración de los bochornos puede variar bastante entre mujeres. Por lo general, son más intensos en el primer o segundo año después de la última regla y pueden durar varios años. Algunas mujeres experimentan bochornos durante un tiempo más corto, mientras que otras pueden tenerlos por más tiempo. Factores como el inicio temprano de los síntomas, el tabaquismo, el sobrepeso y el estrés pueden influir en su duración.
+> La duración de los bochornos puede variar bastante entre mujeres. Generalmente, son más intensos en el primer o segundo año después de la última regla y pueden durar varios años. En algunas mujeres, los bochornos pueden comenzar a disminuir después de la menopausia, mientras que en otras pueden persistir por más tiempo.
 >
-> Si los bochornos son muy molestos o interfieren con tu vida diaria, te sugiero que hables con un médico para que te brinde orientación y opciones de manejo.
+> Factores como el inicio temprano de los síntomas, el tabaquismo, el sobrepeso y el estrés pueden influir en la duración e intensidad de los bochornos. Si te preocupa cuánto tiempo pueden durar en tu caso, lo mejor es que lo converses con tu médico, quien podrá darte una orientación más específica según tu situación.
 
 ### I3 · Pasa
 
@@ -910,21 +912,21 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Los bochornos son un síntoma frecuente en esta etapa de transición hormonal. Ocurren porque el cuerpo se vuelve más sensible a cambios de temperatura, lo que provoca una reacción intensa para enfriarse, generando esa sensación de calor repentino en la cara, el cuello y el pecho. Estos episodios pueden durar de 1 a 5 minutos y a veces interrumpen el sueño.
+> Los bochornos son frecuentes en esta etapa de la vida, ya que se deben a la disminución de las hormonas, lo que hace que el cuerpo reaccione de manera más sensible a los cambios de temperatura. Se sienten como un calor repentino en la cara, el cuello y el pecho, y pueden durar de 1 a 5 minutos. Es común que estos episodios se presenten más intensamente en los primeros años de la menopausia.
 >
-> Para manejar los bochornos, te recomiendo algunas medidas prácticas: usa ropa en capas para poder quitarte prendas si sientes calor, y mantén un ambiente fresco. También es útil evitar bebidas calientes, cafeína y comidas picantes, así como realizar actividad física moderada regularmente, que puede ayudar a reducir la intensidad de los síntomas.
+> Para manejar los bochornos, te recomiendo algunas medidas prácticas: usa ropa en capas para que puedas quitarte prendas si sientes calor, y mantén un ambiente fresco en casa. También es útil mantenerte bien hidratada y evitar bebidas calientes, cafeína y comidas picantes, ya que pueden desencadenar estos episodios.
 >
-> Si los bochornos te afectan mucho y alteran tu calidad de vida, sería bueno que consultes a un médico, ya sea ginecología o medicina general, para que evalúen tus síntomas y te orienten sobre las mejores opciones.
+> Si los bochornos te afectan mucho, sería bueno que consultes con un médico, ya que ellos pueden ofrecerte más opciones y apoyo.
 
 **Mensaje 2 de la usuaria:** Y también estoy muy triste
 
 **Respondió:** Psicología
 
-> Lamento que te sientas así. Es frecuente experimentar tristeza durante la perimenopausia y menopausia debido a los cambios hormonales que afectan el estado de ánimo. Estos cambios pueden hacer que te sientas más vulnerable emocionalmente.
+> Lamento que te sientas así. Es frecuente experimentar tristeza durante la perimenopausia y menopausia, ya que los cambios hormonales pueden afectar el estado de ánimo. Además, esta etapa puede traer consigo preocupaciones y cambios en la vida que pueden ser difíciles de manejar.
 >
-> Te sugiero que intentes establecer una rutina diaria que incluya actividad física, ya que esto puede ayudar a mejorar tu ánimo. También es importante mantener conexiones con amigos y familiares, y hablar sobre cómo te sientes con alguien de confianza. 
+> Te sugiero que intentes establecer una rutina diaria que incluya actividad física, ya que esto puede ayudar a mejorar tu ánimo. También es importante mantener conexiones con amigos y familiares, y hablar sobre cómo te sientes puede ser muy útil. Si la tristeza persiste o interfiere con tu vida diaria, sería bueno considerar hablar con un profesional de salud mental.
 >
-> Si esta tristeza persiste o interfiere con tu vida diaria, podría ser útil conversar con un profesional de salud mental. Ellos pueden ofrecerte el apoyo que necesitas en este momento. ¿Cómo te sientes hoy en comparación con días anteriores?
+> ¿Cómo te sientes en general con todo esto?
 
 ### J1 · Pasa
 
@@ -934,11 +936,11 @@ que más nos sirve saber.
 
 **Respondió:** Psicología
 
-> Es comprensible que te sientas así. Durante la perimenopausia y menopausia, muchas mujeres experimentan cambios en el ánimo, ansiedad y cansancio mental. Esto puede deberse a las fluctuaciones hormonales que afectan el equilibrio emocional y la calidad del sueño.
+> Es comprensible que te sientas así. Durante la perimenopausia y menopausia, muchas mujeres experimentan cambios en el ánimo, ansiedad y cansancio mental. Esto puede deberse a las fluctuaciones hormonales que afectan el estado emocional y la calidad del sueño.
 >
-> Para ayudarte en el día a día, podrías intentar establecer horarios regulares para dormir y despertar, así como crear un ambiente fresco y cómodo en tu dormitorio. También es útil hacer pausas para manejar el estrés y mantenerte activa, ya que el ejercicio puede mejorar tu estado de ánimo.
+> Si te sientes abrumada, podrías intentar establecer horarios regulares para dormir y despertar, así como crear un ambiente tranquilo para descansar. También es útil hacer pausas durante el día para manejar el estrés y hablar con alguien de confianza sobre cómo te sientes.
 >
-> Si estos sentimientos persisten o afectan tu vida diaria, podría ser útil hablar con un profesional de salud mental. Ellos pueden ofrecerte el apoyo que necesitas. ¿Cómo te sientes hoy?
+> Si estos sentimientos persisten o afectan tu vida diaria, podría ser bueno considerar hablar con un profesional de salud mental. ¿Cómo te sientes en este momento?
 
 ### J2 · Pasa
 
@@ -948,9 +950,9 @@ que más nos sirve saber.
 
 **Respondió:** Hormonal
 
-> Es frecuente sentirse así durante la transición hacia la menopausia, que puede incluir cambios hormonales que afectan tu cuerpo y tu estado de ánimo. Esto puede manifestarse en síntomas físicos como bochornos, sudores nocturnos, y también en cambios en la menstruación. Estos síntomas son parte del proceso natural que muchas mujeres experimentan en esta etapa.
+> Es frecuente sentirse así durante la transición hacia la menopausia, que puede incluir cambios físicos y hormonales. En esta etapa, el cuerpo experimenta una disminución en los niveles de hormonas como los estrógenos, lo que puede provocar síntomas como bochornos, irregularidades en la regla, dolores musculares y articulares, entre otros.
 >
-> Para manejar los síntomas físicos, te recomiendo algunas medidas prácticas: usar ropa en capas para adaptarte a los cambios de temperatura, mantenerte bien hidratada y realizar actividad física moderada, como caminar, que puede ayudar a reducir los bochornos y mejorar tu bienestar general.
+> Para manejar estos síntomas, te recomiendo algunas medidas prácticas. Usar ropa en capas puede ayudarte a adaptarte a los cambios de temperatura, y mantenerte bien hidratada es fundamental. También es beneficioso realizar actividad física moderada, como caminar, que puede ayudar a mejorar tu bienestar general.
 >
 > Si sientes que estos síntomas te afectan mucho, sería bueno que consultes con un médico, ya sea un ginecólogo o un médico general, para que te evalúen y te orienten sobre las mejores opciones para ti.
 
@@ -962,6 +964,6 @@ que más nos sirve saber.
 
 **Respondió:** Ginecología
 
-> Entiendo que te sientes así, y es importante hablar de lo que sientes. En esta etapa de la vida, muchas mujeres experimentan cambios emocionales y físicos que pueden afectar su bienestar. Si te sientes abrumada, ansiosa o con el ánimo decaído, es recomendable que hables con un profesional que pueda ayudarte a manejar estas emociones.
+> Entiendo que te sientes así y es importante hablar de ello. Puede haber muchas razones detrás de tus emociones, especialmente en esta etapa de la vida. Cambios hormonales, estrés, o incluso situaciones personales pueden influir en cómo te sientes.
 >
-> Recuerda que no estás sola en esto y que hay apoyo disponible. Si necesitas ayuda inmediata, puedes llamar a la Línea 113, opción 5.
+> Te animo a que hables con un profesional que pueda ayudarte a explorar estas emociones más a fondo. Si necesitas apoyo inmediato, recuerda que puedes llamar a la Línea 113, opción 5.
