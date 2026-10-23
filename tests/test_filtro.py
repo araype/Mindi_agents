@@ -8,32 +8,102 @@ Los IDs (A1, G3, J1...) son los del banco de preguntas.
 import unittest
 from types import SimpleNamespace
 
+from google.adk.models import LlmResponse
+from google.genai import types
+
 from mindi_agent.agent import (
     VIGENCIA_BANDERA,
     actualizar_turno,
     clasificar_mensaje,
-    evitar_autotransferencia,
+    controlar_transferencias,
     ginecologia,
     hormonal,
     lectura_mrs,
     psicologia,
+    recordar_linea_113,
 )
+
+
+def _respuesta(*partes, partial=False):
+    return LlmResponse(
+        content=types.Content(role="model", parts=list(partes)), partial=partial
+    )
+
+
+class RecordatorioLinea113(unittest.TestCase):
+    CON_ALERTA = SimpleNamespace(state={"ultima_bandera": "autolesion"})
+
+    def test_lo_agrega_si_falta(self):
+        respuesta = recordar_linea_113(
+            self.CON_ALERTA, _respuesta(types.Part(text="Lamento que te sientas así."))
+        )
+        self.assertIn("Línea 113", respuesta.content.parts[-1].text)
+
+    def test_no_lo_repite(self):
+        resultado = recordar_linea_113(
+            self.CON_ALERTA, _respuesta(types.Part(text="Llama a la Línea 113."))
+        )
+        self.assertIsNone(resultado)
+
+    def test_no_toca_transferencias_ni_fragmentos(self):
+        transferencia = _respuesta(types.Part(function_call=types.FunctionCall(
+            name="transfer_to_agent", args={"agent_name": "psicologia"}
+        )))
+        fragmento = _respuesta(types.Part(text="Lamento"), partial=True)
+        for respuesta in (transferencia, fragmento):
+            with self.subTest(respuesta=respuesta):
+                self.assertIsNone(recordar_linea_113(self.CON_ALERTA, respuesta))
+
+    def test_sin_alerta_no_hace_nada(self):
+        contexto = SimpleNamespace(state={"ultima_bandera": ""})
+        resultado = recordar_linea_113(contexto, _respuesta(types.Part(text="Hola")))
+        self.assertIsNone(resultado)
 
 
 class Transferencias(unittest.TestCase):
     TRANSFERIR = SimpleNamespace(name="transfer_to_agent")
 
+    @staticmethod
+    def _contexto(agente, state=None, invocacion="inv-1"):
+        return SimpleNamespace(
+            agent_name=agente, state=state if state is not None else {},
+            invocation_id=invocacion,
+        )
+
     def test_bloquea_transferirse_a_si_mismo(self):
-        contexto = SimpleNamespace(agent_name="psicologia")
-        resultado = evitar_autotransferencia(
-            self.TRANSFERIR, {"agent_name": "psicologia"}, contexto
+        resultado = controlar_transferencias(
+            self.TRANSFERIR, {"agent_name": "psicologia"}, self._contexto("psicologia")
         )
         self.assertIsNotNone(resultado)
 
-    def test_deja_pasar_otras_transferencias(self):
-        contexto = SimpleNamespace(agent_name="hormonal")
-        resultado = evitar_autotransferencia(
-            self.TRANSFERIR, {"agent_name": "psicologia"}, contexto
+    def test_deja_pasar_la_primera_transferencia(self):
+        resultado = controlar_transferencias(
+            self.TRANSFERIR, {"agent_name": "psicologia"}, self._contexto("hormonal")
+        )
+        self.assertIsNone(resultado)
+
+    def test_bloquea_la_segunda_en_el_mismo_mensaje(self):
+        # J3: el coordinador manda a ginecología por el test y ginecología
+        # intenta reenviar a psicología.
+        state = {}
+        primera = controlar_transferencias(
+            self.TRANSFERIR, {"agent_name": "ginecologia"}, self._contexto("mindi", state)
+        )
+        segunda = controlar_transferencias(
+            self.TRANSFERIR, {"agent_name": "psicologia"},
+            self._contexto("ginecologia", state),
+        )
+        self.assertIsNone(primera)
+        self.assertIsNotNone(segunda)
+
+    def test_permite_transferir_en_el_mensaje_siguiente(self):
+        state = {}
+        controlar_transferencias(
+            self.TRANSFERIR, {"agent_name": "hormonal"}, self._contexto("mindi", state)
+        )
+        resultado = controlar_transferencias(
+            self.TRANSFERIR, {"agent_name": "psicologia"},
+            self._contexto("hormonal", state, invocacion="inv-2"),
         )
         self.assertIsNone(resultado)
 
@@ -175,6 +245,26 @@ class VigenciaDeLaAlerta(unittest.TestCase):
         state = {}
         actualizar_turno(state, "inv-1")
         self.assertNotIn("ultima_bandera", state)
+
+
+class VariantesDeManchar(unittest.TestCase):
+    def test_activan_evaluacion(self):
+        for mensaje in (
+            "Ayer manché un poquito",
+            "He manchado esta semana",
+            "Sigo manchando aunque ya no me baja",
+            "Me salió una manchita de sangre en la ropa interior",
+        ):
+            with self.subTest(mensaje=mensaje):
+                self.assertEqual(clasificar_mensaje(mensaje), "evaluacion")
+
+    def test_manchas_en_la_piel_no(self):
+        for mensaje in (
+            "Me salieron manchas en la cara",
+            "Tengo una manchita en la piel",
+        ):
+            with self.subTest(mensaje=mensaje):
+                self.assertIsNone(clasificar_mensaje(mensaje))
 
 
 class LecturaMRS(unittest.TestCase):

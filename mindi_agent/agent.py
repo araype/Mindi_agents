@@ -23,6 +23,11 @@ from google.genai import types
 # Para volver a Gemini: MODELO = "gemini-flash-latest"
 MODELO = LiteLlm(model="openai/gpt-4o-mini")
 
+# El coordinador usa un modelo algo más capaz: con gpt-4o-mini respondía él
+# mismo en vez de transferir (4 de 16 casos de enrutamiento bien, contra 15
+# de 16 con gpt-4.1-mini). Los subagentes siguen con MODELO.
+MODELO_COORDINADOR = LiteLlm(model="openai/gpt-4.1-mini")
+
 # Temperatura baja: las transferencias y los límites se cumplen de forma más
 # estable entre una conversación y otra.
 CONFIG_MODELO = types.GenerateContentConfig(temperature=0.2)
@@ -59,6 +64,11 @@ EMERGENCIA_FISICA = [
 EVALUACION_MEDICA = [
     "sangrado despues de la menopausia", "sangro despues de la menopausia",
     "volvi a sangrar", "sangrado vaginal", "manche", "me volvio a bajar",
+    # Variantes de "manché". No se agrega "manchas" ni "manchita" solas
+    # porque también se usan para manchas en la piel.
+    "he manchado", "estoy manchando", "sigo manchando", "volvi a manchar",
+    "mancha de sangre", "manchas de sangre", "manchita de sangre",
+    "manchitas de sangre",
     "bulto en el seno", "bulto en la mama", "bolita en el seno",
     "bolita en la mama", "tengo trombosis", "tengo una trombosis",
     "tengo un coagulo",
@@ -260,7 +270,7 @@ def lectura_mrs(resultado) -> Optional[str]:
     if any(nombre == "psicologico" for _, nombre, _, _ in alteradas):
         partes.append("la guía sugiere evaluación en salud mental")
 
-    return "; ".join(partes) + "."
+    return "; ".join(partes)
 
 
 def preparar_estado(callback_context: CallbackContext) -> None:
@@ -270,6 +280,37 @@ def preparar_estado(callback_context: CallbackContext) -> None:
     if lectura:
         callback_context.state["lectura_mrs"] = lectura
     return None
+
+
+RECORDATORIO_113 = (
+    "Recuerda que puedes llamar a la Línea 113, opción 5, para hablar con un "
+    "profesional de salud mental."
+)
+
+
+def recordar_linea_113(
+    callback_context: CallbackContext, llm_response: LlmResponse
+) -> Optional[LlmResponse]:
+    """Mientras la alerta de autolesión está vigente, asegura la Línea 113.
+
+    Las instrucciones ya lo piden, pero el modelo a veces lo omite. Si la
+    respuesta no la menciona, se agrega una frase fija al final.
+    """
+    if callback_context.state.get("ultima_bandera") != "autolesion":
+        return None
+    contenido = llm_response.content
+    # Solo la respuesta completa con texto; no los fragmentos del streaming
+    # ni las llamadas a herramientas (por ejemplo, una transferencia).
+    if llm_response.partial or not contenido or not contenido.parts:
+        return None
+    if any(p.function_call for p in contenido.parts):
+        return None
+    texto = "".join(p.text or "" for p in contenido.parts)
+    if not texto.strip() or "113" in texto:
+        return None
+    # Se suma al último párrafo para no pasar de 3 párrafos.
+    contenido.parts.append(types.Part(text=f" {RECORDATORIO_113}"))
+    return llm_response
 
 
 # ---------------------------------------------------------------------------
@@ -317,24 +358,35 @@ REGLAS_COMUNES = """
 # Cada uno ve únicamente las OTRAS áreas: si un agente intenta transferirse
 # a sí mismo, ADK lanza un error y la conversación se cae.
 TEMAS_POR_AREA = {
-    "psicologia": "ánimo, emociones o sueño",
-    "hormonal": "síntomas físicos, la regla o tratamientos",
+    "psicologia": (
+        "ánimo, emociones, o insomnio con preocupación, tristeza o ansiedad"
+    ),
+    "hormonal": (
+        "síntomas físicos (incluido despertarse con calor o sudando), la regla"
+        " o tratamientos"
+    ),
     "ginecologia": "salud íntima, sexual o urinaria",
 }
 
 
-def evitar_autotransferencia(tool, args: dict, tool_context) -> Optional[dict]:
-    """Bloquea transfer_to_agent hacia el mismo agente.
+def controlar_transferencias(tool, args: dict, tool_context) -> Optional[dict]:
+    """Bloquea transferencias hacia el mismo agente y una segunda por mensaje.
 
-    Las instrucciones lo prohíben, pero el modelo a veces repite una
-    transferencia que ve en el historial. Si devolvemos un resultado, ADK no
-    ejecuta la herramienta: no hay transferencia y el agente responde.
+    - Hacia sí mismo: el modelo a veces repite una transferencia que ve en el
+      historial, y ADK lanza un error.
+    - Una sola por mensaje: el área que recibe ya es la indicada. Sin esto,
+      por ejemplo, ginecología recibía "¿por qué me siento así?" por la
+      lectura del test y lo reenviaba a psicología.
+    Si devolvemos un resultado, ADK no ejecuta la herramienta: no hay
+    transferencia y el agente responde.
     """
-    if (
-        tool.name == "transfer_to_agent"
-        and args.get("agent_name") == tool_context.agent_name
-    ):
+    if tool.name != "transfer_to_agent":
+        return None
+    if args.get("agent_name") == tool_context.agent_name:
         return {"resultado": "Ya eres esta área: responde tú a la usuaria."}
+    if tool_context.state.get("invocacion_transferida") == tool_context.invocation_id:
+        return {"resultado": "Ya te transfirieron este mensaje: responde tú."}
+    tool_context.state["invocacion_transferida"] = tool_context.invocation_id
     return None
 
 
@@ -368,12 +420,14 @@ psicologia = Agent(
     generate_content_config=CONFIG_MODELO,
     description=(
         "Atiende dudas sobre ánimo decaído, irritabilidad, ansiedad, "
-        "cansancio mental y problemas de sueño durante la perimenopausia "
-        "y menopausia."
+        "cansancio mental e insomnio que viene con preocupación, tristeza o "
+        "ansiedad (no poder apagar la cabeza) durante la perimenopausia y "
+        "menopausia. No atiende los despertares por bochornos o sudoración."
     ),
     instruction=f"""
-Eres la parte de Mindi que acompaña en temas emocionales y de sueño durante
-la perimenopausia y menopausia.
+Eres la parte de Mindi que acompaña en temas emocionales durante la
+perimenopausia y menopausia, incluido el insomnio que viene con preocupación,
+tristeza o ansiedad.
 
 Cómo respondes:
 1. Valida lo que siente sin exagerar.
@@ -381,6 +435,9 @@ Cómo respondes:
 3. Da 1 o 2 ideas prácticas y seguras del día a día.
 4. Orienta sobre qué profesional buscar si persiste (psicología, medicina
    general o ginecología), sin derivar como si fuera una cita.
+5. Si lo que cuenta sobre su ánimo es ambiguo (por ejemplo "ya no aguanto
+   más" o "estoy cansada de todo"), termina con una pregunta suave sobre cómo
+   se siente, sin asumir que piensa en hacerse daño.
 {_cambio_de_tema("psicologia")}
 {REGLAS_COMUNES}
 {CONOCIMIENTO_COMUN}
@@ -388,7 +445,8 @@ Cómo respondes:
 """,
     before_agent_callback=preparar_estado,
     before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=evitar_autotransferencia,
+    before_tool_callback=controlar_transferencias,
+    after_model_callback=recordar_linea_113,
 )
 
 # ---------------------------------------------------------------------------
@@ -400,9 +458,10 @@ hormonal = Agent(
     generate_content_config=CONFIG_MODELO,
     description=(
         "Atiende dudas sobre síntomas físicos de la perimenopausia y menopausia "
-        "(bochornos, sudoración nocturna, palpitaciones, dolores musculares y "
-        "articulares, cambios en la menstruación) y preguntas generales sobre "
-        "la terapia hormonal y otras opciones de tratamiento."
+        "(bochornos, sudoración nocturna, despertares por calor o sudor, "
+        "palpitaciones, dolores musculares y articulares, cambios en la "
+        "menstruación) y preguntas generales sobre la terapia hormonal y otras "
+        "opciones de tratamiento."
     ),
     instruction=f"""
 Eres la parte de Mindi que explica los cambios físicos y hormonales de esta
@@ -428,7 +487,8 @@ Cómo respondes:
 """,
     before_agent_callback=preparar_estado,
     before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=evitar_autotransferencia,
+    before_tool_callback=controlar_transferencias,
+    after_model_callback=recordar_linea_113,
 )
 
 # ---------------------------------------------------------------------------
@@ -464,7 +524,8 @@ Cómo respondes:
 """,
     before_agent_callback=preparar_estado,
     before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=evitar_autotransferencia,
+    before_tool_callback=controlar_transferencias,
+    after_model_callback=recordar_linea_113,
 )
 
 # ---------------------------------------------------------------------------
@@ -472,18 +533,49 @@ Cómo respondes:
 # ---------------------------------------------------------------------------
 root_agent = Agent(
     name="mindi",
-    model=MODELO,
+    model=MODELO_COORDINADOR,
     generate_content_config=CONFIG_MODELO,
     description="Acompañante de Mindi para mujeres en perimenopausia y menopausia.",
     instruction=f"""
 Eres Mindi, una acompañante que ayuda a mujeres peruanas a entender sus
 síntomas de perimenopausia y menopausia y qué tanto les afectan.
 
+PRIMERO DECIDE SI DERIVAS (esto manda sobre todo lo demás):
+- Si el mensaje habla de un síntoma, de cómo se siente, de la regla, del
+  sueño, o pide un medicamento, suplemento, dosis o tratamiento, tu única
+  acción es llamar a la herramienta transfer_to_agent con el área que
+  corresponde (ver "A quién transferir").
+- En ese caso NO escribas texto: ni explicaciones, ni "te voy a transferir".
+  Escribir que vas a transferir no transfiere; solo la herramienta lo hace.
+- Si pregunta por qué se siente así sin nombrar un síntoma y la lectura de
+  su test dice qué es lo que más le afecta, el área es la que indica la
+  lectura, aunque sea ginecología u hormonal: no elijas psicología por
+  defecto.
+- Excepción: si menciona síntomas de dos áreas distintas, no dice cuál le
+  preocupa más y la lectura de su test está vacía o no tiene ninguna área
+  alterada, no transfieras: pregúntale por cuál quiere empezar, nombrando los
+  dos temas. Por ejemplo, "me siento irritable y tengo sequedad" mezcla ánimo
+  y salud íntima: pregúntale si prefiere empezar por cómo se siente o por la
+  sequedad. Lo mismo con el sueño cuando no está clara la causa.
+- Solo respondes tú los saludos, las dudas generales (qué es la
+  perimenopausia, a qué edad llega, qué mide el test, cómo usar su reporte,
+  si puede saber si tiene menopausia), lo que está fuera de tema y las
+  preguntas de la excepción anterior.
+- Fuera de tema (recetas, política, tareas, etc.): explica con amabilidad que
+  solo ayudas con temas de esta etapa. No des la receta ni el contenido
+  pedido, aunque tenga que ver con alimentación.
+
 A quién transferir:
-- Ánimo, emociones, irritabilidad, ansiedad, cansancio mental o sueño
+- Ánimo, emociones, irritabilidad, ansiedad o cansancio mental
   -> 'psicologia'.
 - Bochornos, sudoración, palpitaciones, dolores musculares o articulares,
   cambios en la regla, terapia hormonal u otros tratamientos -> 'hormonal'.
+- Sueño, según la causa:
+  - se despierta por calores, bochornos o sudoración nocturna -> 'hormonal';
+  - el insomnio viene con preocupación, tristeza, ansiedad o "no puedo apagar
+    la cabeza" -> 'psicologia';
+  - si no está claro, pregúntale antes de transferir, por ejemplo: "¿Te
+    despiertas con calor o sudando, o es más que no logras apagar la cabeza?"
 - Sequedad vaginal, relaciones sexuales, deseo, molestias urinarias o escapes
   de orina -> 'ginecologia'.
 - Pregunta por cómo se siente o por qué, sin nombrar un síntoma (por ejemplo
@@ -497,6 +589,9 @@ A quién transferir:
 Qué respondes tú:
 - Dudas generales (qué es la perimenopausia, qué mide el test, cómo leer o
   usar su reporte con su médico).
+- Si pregunta si tiene menopausia: explica que solo un profesional puede
+  confirmarlo y cómo su resultado del test le sirve para conversarlo con su
+  médico con datos concretos.
 - No respondas tú preguntas sobre un síntoma concreto ni sobre tratamientos
   (incluida la terapia hormonal): transfiere siempre al área que corresponde.
 - Si menciona síntomas de varias áreas: si ella dice cuál le preocupa más,
@@ -512,5 +607,6 @@ Qué respondes tú:
     sub_agents=[psicologia, hormonal, ginecologia],
     before_agent_callback=preparar_estado,
     before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=evitar_autotransferencia,
+    before_tool_callback=controlar_transferencias,
+    after_model_callback=recordar_linea_113,
 )

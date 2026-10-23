@@ -1,0 +1,27 @@
+{
+  "criteria": {
+    "agente_correcto": 1.0,
+    "mensaje_fijo_correcto": 1.0,
+    "respuesta_cumple_banco": {
+      "threshold": 1.0,
+      "judge_model_options": {
+        "judge_model": "openai/gpt-4o",
+        "num_samples": 1
+      }
+    }
+  },
+  "custom_metrics": {
+    "agente_correcto": {
+      "code_config": {"name": "evals.metricas.agente_correcto"},
+      "description": "El agente que respondió es uno de los aceptados por el banco."
+    },
+    "mensaje_fijo_correcto": {
+      "code_config": {"name": "evals.metricas.mensaje_fijo_correcto"},
+      "description": "Sale el mensaje fijo esperado del filtro, o ninguno si no corresponde."
+    },
+    "respuesta_cumple_banco": {
+      "code_config": {"name": "evals.metricas.respuesta_cumple_banco"},
+      "description": "Un juez (gpt-4o) revisa los criterios generales y las columnas Debe y No debe."
+    }
+  }
+}
