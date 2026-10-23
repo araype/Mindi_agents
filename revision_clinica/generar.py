@@ -277,6 +277,101 @@ que más nos sirve saber.
     return "\n".join(partes)
 
 
+# Notas "Por qué puede pasarte" del reporte de la web de Mindi (chat, correo y PDF).
+# MISMO texto que Mindi, supabase/functions/_shared/notas.js: si se cambia allá,
+# se cambia aquí. En la web, la nota del corazón arma el final con el aviso de
+# emergencia compartido ("acude a emergencias o llama al 106 (SAMU)").
+NOTAS_REPORTE = [
+    ("Bochornos", "Los bochornos se deben a cambios en cómo el cuerpo regula la "
+     "temperatura cuando bajan los estrógenos. Son una respuesta física real y muy "
+     "frecuente en esta etapa."),
+    ("Corazón", "Algunas mujeres sienten el corazón acelerado durante un bochorno. "
+     "Coméntalo con tu médico(a), sobre todo si te pasa a menudo. Si viene con dolor "
+     "o presión en el pecho, falta de aire o mareo, acude a emergencias o llama al "
+     "106 (SAMU)."),
+    ("Músculos y articulaciones", "Muchas mujeres notan dolores articulares en esta "
+     "etapa. Pueden influir los cambios hormonales, pero también la edad y la "
+     "actividad física, así que vale la pena revisarlo con tu médico(a)."),
+    ("Sueño", "Los problemas de sueño son frecuentes en esta etapa, sobre todo cuando "
+     "los bochornos o la sudoración nocturna te despiertan. También pueden influir el "
+     "estrés y otros factores."),
+    ("Ánimo", "Muchas mujeres notan cambios de ánimo en esta etapa. Pueden influir los "
+     "cambios hormonales, el sueño y lo que estás viviendo. Si la tristeza se mantiene "
+     "por varias semanas o te cuesta hacer tus actividades, busca apoyo de un "
+     "profesional."),
+    ("Irritabilidad", "La irritabilidad también es frecuente en esta etapa y suele "
+     "empeorar cuando duermes mal. No significa que algo esté mal contigo."),
+    ("Ansiedad", "La ansiedad puede aparecer o intensificarse en esta etapa, por los "
+     "cambios en el cuerpo y en la vida. Si te limita en tu día a día, un profesional "
+     "de salud mental puede ayudarte."),
+    ("Cansancio", "El cansancio es muy común en esta etapa y se relaciona con el sueño, "
+     "el ánimo y otros cambios. Si es intenso o no mejora, coméntalo con tu médico(a), "
+     "porque también puede tener otras causas."),
+    ("Deseo sexual", "Los cambios en el deseo sexual son comunes en esta etapa, y pueden "
+     "influir factores físicos, como la sequedad, y emocionales. No significa que algo "
+     "esté mal contigo."),
+    ("Al orinar", "Los cambios al orinar se relacionan con la baja de estrógenos, que "
+     "afecta los tejidos de la zona. Son más comunes de lo que se habla y tienen manejo."),
+    ("Sequedad íntima", "La sequedad íntima ocurre porque esos tejidos también dependen "
+     "de los estrógenos. Hay opciones simples que puedes comentar con tu médico(a)."),
+]
+
+
+# Glosario del chat de la web: MISMO texto que Mindi, src/glosario.js.
+GLOSARIO_ETAPAS = [
+    ("Perimenopausia", "Es la transición hacia la menopausia: la regla empieza a "
+     "variar y pueden aparecer síntomas. Dura hasta un año después de la última regla."),
+    ("Postmenopausia", "Es la etapa que empieza cuando ya pasaron 12 meses seguidos "
+     "sin regla."),
+]
+
+
+def seccion_notas_reporte() -> str:
+    filas = "\n".join(f"| {sintoma} | {texto} |" for sintoma, texto in NOTAS_REPORTE)
+    filas_glosario = "\n".join(f"| {termino} | {texto} |" for termino, texto in GLOSARIO_ETAPAS)
+    return f"""## 6. Notas del reporte web: "Por qué puede pasarte"
+
+> **Versión provisional, pendiente de validación médica.** Estos textos ya se
+> muestran en el reporte de la web, pero nadie del equipo médico los ha revisado.
+
+Al final del test, el reporte de la web (en el chat, el PDF y el correo) tiene
+una sección "Por qué puede pasarte" con una nota por cada síntoma que la usuaria
+marcó en 2 ("Moderado") o más. No cambian según la intensidad: la recomendación
+de ir al médico ya va arriba, en el resultado.
+
+Reemplazan una versión anterior que atribuía a los cambios hormonales el ánimo,
+los dolores articulares y el deseo sexual. Ahora esas tres notas mencionan
+también otras causas, en línea con la opción 2 de la pregunta (c). La del
+corazón agrega cuándo acudir a emergencias.
+
+| Síntoma | Texto que ve la usuaria |
+| --- | --- |
+{filas}
+
+### Pregunta abierta
+
+¿Se asocian a la menopausia el ánimo, los dolores articulares y el deseo sexual?
+La guía AETSA 2015 solo asocia de forma consistente los bochornos y los síntomas
+vaginales; la del HNHU sí relaciona los demás con esta etapa (ver la pregunta (c)).
+¿Les parece adecuada la redacción de esas tres notas, o debe cambiar según la
+postura que decidan? ¿Hay alguna nota que deba corregirse o quitarse?
+
+### Glosario del chat: perimenopausia y postmenopausia
+
+> **Versión provisional, pendiente de validación médica.**
+
+En el test, la pregunta sobre la regla tiene un ícono ⓘ que explica estos
+términos. Siguen la definición clínica que ya usa la nota de etapa del reporte
+(HNHU 6.2.1):
+
+| Término | Texto que ve la usuaria |
+| --- | --- |
+{filas_glosario}
+
+¿Les parecen correctas y claras estas definiciones?
+"""
+
+
 def main() -> None:
     encabezado = f"""# Revisión clínica de Mindi
 
@@ -294,13 +389,14 @@ Cómo está organizado:
 3. Lectura del test MRS.
 4. Fichas de conocimiento de cada área.
 5. El banco de preguntas con la respuesta real del agente en cada caso.
+6. Notas del reporte web ("Por qué puede pasarte"), versión provisional.
 
 Mindi no diagnostica ni indica medicamentos o dosis: explica, orienta y
 sugiere a qué profesional acudir.
 """
     documento = "\n".join([
         encabezado, seccion_preguntas(), seccion_banderas(), seccion_mrs(),
-        seccion_fichas(), seccion_banco(),
+        seccion_fichas(), seccion_banco(), seccion_notas_reporte(),
     ])
     SALIDA.write_text(documento, encoding="utf-8")
     print(f"-> {SALIDA}")
