@@ -160,7 +160,10 @@ gcloud secrets add-iam-policy-binding OPENAI_API_KEY \
 
 If the secret already exists, do not create it again. To change the key, add a new version in the Cloud console: **Security → Secret Manager → OPENAI_API_KEY → New version**, paste the key and save. The service reads `latest`, so the next deploy (or a new revision) picks it up; disable the old version afterwards.
 
-Deploy (public, one instance at most, no dev UI):
+Deploy (one instance at most, no dev UI). Since the web's Phase 4 the service is **private**: only the
+web's server (`/api/agent` on Vercel) calls it, with a Google ID token from a service account that has
+`roles/run.invoker`. Use `--no-allow-unauthenticated` (see "Private Cloud Run" below). The command
+below still shows the old public flag for reference; replace it:
 
 ```bash
 adk deploy cloud_run \
@@ -171,6 +174,21 @@ adk deploy cloud_run \
   --artifact_service_uri=memory:// \
   ./mindi_agent \
   -- --set-secrets=OPENAI_API_KEY=OPENAI_API_KEY:latest --max-instances=1 --allow-unauthenticated
+```
+
+### Private Cloud Run
+
+```bash
+# 1. Service account for the web, allowed to invoke only this service
+gcloud iam service-accounts create mindi-web --display-name="Mindi web (Vercel)"
+gcloud run services add-iam-policy-binding mindi-agent --region=us-central1   --member="serviceAccount:mindi-web@YOUR_PROJECT.iam.gserviceaccount.com" --role="roles/run.invoker"
+# 2. Key for Vercel (env GCP_SA_KEY). Never commit it; delete the local file after pasting it.
+gcloud iam service-accounts keys create mindi-web-sa-key.json --iam-account=mindi-web@YOUR_PROJECT.iam.gserviceaccount.com
+# 3. Close the service to the public
+gcloud run services remove-iam-policy-binding mindi-agent --region=us-central1 --member="allUsers" --role="roles/run.invoker"
+# 4. Check: without a token it must answer 403
+curl -s -o /dev/null -w "%{http_code}
+" -X POST $APP_URL/run
 ```
 
 Sessions are kept in memory and are lost when the instance restarts; pass `--session_service_uri` with a Postgres URL to persist them. The URIs are explicit because, when they are unset, ADK may connect to Agent Platform services on its own. Add `--allow_origins="https://YOUR-APP.vercel.app"` only if a browser will call the service directly, and `--with_ui` to also serve the ADK dev UI.
@@ -211,7 +229,9 @@ We recommend calling the agent from a server-side route (for example, a Vercel A
 - The red-flag lists are a first layer, not a complete safety system. Phrase matching misses many ways of describing a symptom, so logs should be reviewed regularly.
 - Conversations about health are sensitive personal data under Peru's Personal Data Protection Law (Ley 29733). Get explicit consent before storing them.
 - Check the data-use terms of your OpenAI plan before handling real users' conversations.
-- Never commit `.env` or API keys.
+- Never commit `.env` or API keys. A pre-commit hook runs gitleaks on every commit; enable it once per
+  clone with `git config core.hooksPath .githooks` (needs gitleaks: `winget install gitleaks` or
+  `brew install gitleaks`). GitHub Secret Scanning and Push Protection should also be on.
 
 ## Team
 

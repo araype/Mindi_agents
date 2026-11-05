@@ -1,4 +1,18 @@
-.env
+# Variables y claves: nunca al repo (la key del modelo llega por Secret Manager)
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+*service-account*.json
+*-sa-key*.json
+gcp-*.json
+credentials*.json
+
+# Textos pegados y transcripciones de sesión (pueden tener claves)
+*pastedcontent*.txt
+*-this-session-is-being-continued-*.txt
+
 __pycache__/
 *.pyc
 .venv/
