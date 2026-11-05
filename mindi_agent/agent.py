@@ -314,12 +314,38 @@ def lectura_mrs(resultado) -> Optional[str]:
     return "; ".join(partes)
 
 
+# Tema con el que se abrió el chat desde la web (/chat?tema=peso). La web solo manda la etiqueta
+# (tema_inicial) y aquí se cambia por un contexto fijo: nunca llega texto de la usuaria ni de la URL
+# a las instrucciones. Cualquier otra etiqueta se ignora.
+CONTEXTO_TEMA = {
+    "peso": (
+        "Llegó desde la tarjeta sobre el peso. La web ya la saludó: le dijo que muchas mujeres "
+        "notan cambios en su peso en esta etapa aunque coman igual que antes, que no es falta de "
+        "voluntad, y le preguntó qué es lo que más le preocupa. Habla de entender lo que pasa en "
+        "su cuerpo, nunca de bajar de peso ni de dietas."
+    ),
+    "trabajo": (
+        "Llegó desde la tarjeta sobre el trabajo. La web ya la saludó: le dijo que sentirse "
+        "distinta en el trabajo en esta etapa es más común de lo que parece, aunque casi nadie lo "
+        "diga, y le preguntó qué le está pasando."
+    ),
+}
+
+
+def contexto_tema(tema) -> str:
+    """Etiqueta de la web → contexto fijo para las instrucciones ('' si no es un tema conocido)."""
+    return CONTEXTO_TEMA.get(tema, "") if isinstance(tema, str) else ""
+
+
 def preparar_estado(callback_context: CallbackContext) -> None:
-    """Antes de que responda cada agente: turno, alertas y lectura del MRS."""
+    """Antes de que responda cada agente: turno, alertas, lectura del MRS y tema inicial."""
     actualizar_turno(callback_context.state, callback_context.invocation_id)
     lectura = lectura_mrs(callback_context.state.get("resultado_mrs"))
     if lectura:
         callback_context.state["lectura_mrs"] = lectura
+    # Siempre se reescribe desde la etiqueta: aunque alguien ponga contexto_tema en la sesión,
+    # a las instrucciones solo llega uno de los textos fijos de arriba.
+    callback_context.state["contexto_tema"] = contexto_tema(callback_context.state.get("tema_inicial"))
     return None
 
 
@@ -442,6 +468,9 @@ REGLAS_COMUNES = """
   sugieras pedirle a su médico que se lo aplique.
 - Si viene al caso, menciona en palabras simples qué área salió más alta en
   su test, sin dar números ni etiquetas de gravedad.
+- Cómo llegó al chat: {contexto_tema?}. Si hay texto, la web ya la saludó sobre ese tema y le
+  preguntó qué le pasa: responde en ese contexto, sin repetir el saludo ni volver a presentarte.
+  Si está vacío, no lo menciones.
 - Alerta reciente del filtro: {ultima_bandera?}. Si es 'autolesion', responde
   con calidez y sin juzgar, no minimices lo que siente, no des consejos que
   reemplacen la ayuda profesional y, en algún momento de tu respuesta,
