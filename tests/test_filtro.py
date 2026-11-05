@@ -355,13 +355,30 @@ if __name__ == "__main__":
     unittest.main()
 
 
-class HerramientaOfrecerTest(unittest.TestCase):
+class HerramientaRecomendarTest(unittest.TestCase):
+    class _Contexto:
+        def __init__(self, **estado):
+            self.state = dict(estado)
+
     def test_todos_los_agentes_la_tienen(self):
-        from mindi_agent.agent import ofrecer_test, root_agent
+        from mindi_agent.agent import recomendar_test, root_agent
         for agente in (root_agent, psicologia, hormonal, ginecologia):
             with self.subTest(agente=agente.name):
-                self.assertIn(ofrecer_test, agente.tools)
+                self.assertIn(recomendar_test, agente.tools)
 
-    def test_no_hace_nada_mas(self):
-        from mindi_agent.agent import ofrecer_test
-        self.assertIsInstance(ofrecer_test(), dict)
+    def test_muestra_el_boton_como_maximo_dos_veces(self):
+        from mindi_agent.agent import recomendar_test
+        ctx = self._Contexto()
+        self.assertTrue(recomendar_test(ctx)["mostrar_boton"])
+        self.assertTrue(recomendar_test(ctx)["mostrar_boton"])
+        self.assertFalse(recomendar_test(ctx)["mostrar_boton"])
+
+    def test_no_si_ya_hizo_el_test(self):
+        from mindi_agent.agent import recomendar_test
+        self.assertFalse(recomendar_test(self._Contexto(lectura_mrs="Nivel B..."))["mostrar_boton"])
+
+    def test_no_si_hay_alerta_reciente(self):
+        from mindi_agent.agent import recomendar_test
+        for bandera in ("emergencia", "evaluacion", "autolesion"):
+            with self.subTest(bandera=bandera):
+                self.assertFalse(recomendar_test(self._Contexto(ultima_bandera=bandera))["mostrar_boton"])

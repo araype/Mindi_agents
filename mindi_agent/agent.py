@@ -17,6 +17,7 @@ from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmRequest, LlmResponse
 from google.adk.models.lite_llm import LiteLlm
+from google.adk.tools.tool_context import ToolContext
 from google.genai import types
 
 # Modelo de OpenAI vía LiteLLM (requiere OPENAI_API_KEY en el .env).
@@ -108,7 +109,7 @@ MENSAJE_EMERGENCIA = (
 
 MENSAJE_EVALUACION = (
     "Gracias por contarme esto. Es algo que conviene que revise un médico o "
-    "ginecóloga antes de cualquier tratamiento, para descartar otras causas. "
+    "ginecólogo antes de cualquier tratamiento, para descartar otras causas. "
     "No es motivo para alarmarse, pero sí para pedir una cita pronto. "
     "Si quieres, te ayudo a preparar qué contarle en la consulta, o puedes "
     "escribirme cualquier otra duda que tengas."
@@ -227,7 +228,7 @@ SUBESCALAS_MRS = {
 RECOMENDACION_MEDICO = {
     "A": "Puedes comentarlo en tu próximo control ginecológico.",
     "B": (
-        "Te recomendamos agendar una consulta con tu ginecóloga u obstetra en "
+        "Te recomendamos agendar una consulta con tu ginecólogo u obstetra en "
         "las próximas semanas. Lleva tu reporte."
     ),
     "C": "Te recomendamos consultar pronto con un especialista. Lleva tu reporte.",
@@ -371,17 +372,32 @@ CONOCIMIENTO_COMUN = _ficha("comun")
 
 
 # ---------------------------------------------------------------------------
-# 1d. Invitación al test de Mindi
+# 1d. Recomendación del test de Mindi (handoff 10.5.1)
 # ---------------------------------------------------------------------------
-def ofrecer_test() -> dict:
-    """Muestra a la usuaria el botón "Hacer mi test aquí" para hacer el test de
-    Mindi en este mismo chat.
+# El test no se hace en este chat: se abre en su propia página, en una sesión
+# nueva. El agente solo pide que se muestre el botón; la web lo dibuja
+# ("Haz el test de 5 min →") y nunca recibe URLs ni HTML del agente.
+MAX_RECOMENDACIONES_TEST = 2
 
-    Llámala cuando la invites a hacer el test. No recibe argumentos.
+
+def recomendar_test(tool_context: ToolContext) -> dict:
+    """Muestra debajo de tu respuesta el botón "Haz el test de 5 min", que
+    abre el test de Mindi en su propia página.
+
+    Llámala cuando le recomiendes el test. No recibe argumentos.
     """
-    # No hace nada más: la web detecta la llamada a ofrecer_test en los
-    # eventos y muestra el botón.
-    return {"resultado": "La web le muestra el botón 'Hacer mi test aquí'."}
+    # Las reglas se cumplen aquí aunque el modelo se equivoque: la web solo
+    # muestra el botón si mostrar_boton es True.
+    estado = tool_context.state
+    if estado.get("lectura_mrs"):
+        return {"mostrar_boton": False, "resultado": "Ya hizo el test: no se lo recomiendes; usa su lectura para responder."}
+    if estado.get("ultima_bandera"):
+        return {"mostrar_boton": False, "resultado": "Hay una alerta reciente: no recomiendes el test; lo primero es la atención médica."}
+    veces = estado.get("recomendaciones_test", 0)
+    if veces >= MAX_RECOMENDACIONES_TEST:
+        return {"mostrar_boton": False, "resultado": "Ya se lo recomendaste dos veces: no insistas y sigue respondiendo sus dudas."}
+    estado["recomendaciones_test"] = veces + 1
+    return {"mostrar_boton": True, "resultado": "La web muestra el botón debajo de tu respuesta."}
 
 
 # ---------------------------------------------------------------------------
@@ -402,14 +418,25 @@ REGLAS_COMUNES = """
   "subescala", "alterada", el nombre de un agente). Si trae la recomendación
   que vio en su resultado, no la contradigas: si habla de ir al médico,
   repítela con tus palabras.
-- Test de Mindi: si la lectura de su test está vacía y ella pregunta por el
-  test, por sus síntomas o por qué tanto le afectan, invítala a hacer el test
-  de Mindi aquí mismo, en este chat, y llama a la herramienta ofrecer_test
-  para que vea el botón. Llámala ANTES de escribir, una sola vez, y después
-  escribe una única respuesta que incluya la invitación; no escribas un texto
-  antes de llamarla. No hables de "tu resultado" si no lo tiene. Nunca recomiendes tests
-  externos ni versiones en línea, ni le sugieras pedirle a su médico que se
-  lo aplique. Si ya hay lectura, no se lo ofrezcas de nuevo.
+- Test de Mindi: primero responde su duda, en lenguaje simple. Si la lectura
+  de su test está vacía y la conversación trata de sus síntomas o de qué tanto
+  le afectan (o ya respondiste una o dos dudas), al final de tu respuesta
+  recomiéndale el test con un mensaje corto que explique el beneficio, por
+  ejemplo: "Para saber cuánto te están afectando, te recomiendo hacer el
+  test. Son 11 preguntas y al final tienes un reporte para llevar a tu
+  médico." y llama a la herramienta recomendar_test para que vea el botón.
+  Llámala ANTES de escribir, una sola vez, y después escribe una única
+  respuesta que primero resuelva su duda y termine con la recomendación; no
+  escribas un texto antes de llamarla. Si la herramienta dice que no
+  corresponde, no recomiendes el test en esa respuesta.
+- El test se hace en su propia página, no en este chat: no le hagas tú las
+  preguntas del test ni escribas enlaces o direcciones web. Recomiéndalo como
+  máximo dos veces por conversación; si no quiere, sigue respondiendo sus
+  dudas sin insistir. Si ya hay lectura, no se lo recomiendes: usa su lectura
+  para responder. Si hay una alerta reciente del filtro, no lo recomiendes:
+  lo primero es la atención médica. No hables de "tu resultado" si no lo
+  tiene. Nunca recomiendes tests externos ni versiones en línea, ni le
+  sugieras pedirle a su médico que se lo aplique.
 - Si viene al caso, menciona en palabras simples qué área salió más alta en
   su test, sin dar números ni etiquetas de gravedad.
 - Alerta reciente del filtro: {ultima_bandera?}. Si es 'autolesion', responde
@@ -512,7 +539,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[ofrecer_test],
+    tools=[recomendar_test],
 )
 
 # ---------------------------------------------------------------------------
@@ -555,7 +582,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[ofrecer_test],
+    tools=[recomendar_test],
 )
 
 # ---------------------------------------------------------------------------
@@ -593,7 +620,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[ofrecer_test],
+    tools=[recomendar_test],
 )
 
 # ---------------------------------------------------------------------------
@@ -628,8 +655,8 @@ PRIMERO DECIDE SI DERIVAS (esto manda sobre todo lo demás):
 - Si pregunta por el test o por cómo saber qué tanto le afectan sus
   síntomas (por ejemplo "¿puedo hacer el test aquí?" o "¿cómo sé qué tan
   fuertes son mis síntomas?"), respondes tú: explícale en una o dos frases qué
-  mide y, si la lectura de su test está vacía, invítala a hacerlo aquí y
-  llama a ofrecer_test.
+  mide y, si la lectura de su test está vacía, recomiéndaselo y llama a
+  recomendar_test.
 - Solo respondes tú los saludos, las dudas generales (qué es la
   perimenopausia, a qué edad llega, qué mide el test, cómo usar su reporte,
   si puede saber si tiene menopausia), lo que está fuera de tema y las
@@ -665,7 +692,7 @@ Qué respondes tú:
 - Si pregunta si tiene menopausia o si lo que siente es por la menopausia:
   explica que solo un profesional puede confirmarlo y cómo el test de Mindi le
   sirve para conversarlo con su médico con datos concretos; si la lectura de
-  su test está vacía, invítala a hacerlo aquí con ofrecer_test.
+  su test está vacía, recomiéndaselo con recomendar_test.
 - No respondas tú preguntas sobre un síntoma concreto ni sobre tratamientos
   (incluida la terapia hormonal): transfiere siempre al área que corresponde.
 - Si menciona síntomas de varias áreas: si ella dice cuál le preocupa más,
@@ -683,5 +710,5 @@ Qué respondes tú:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[ofrecer_test],
+    tools=[recomendar_test],
 )

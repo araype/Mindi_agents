@@ -14,7 +14,7 @@
 ## Qué opciones existen (sin nombres ni dosis)
 - Lubricantes para las relaciones e hidratantes vaginales de uso regular (HNHU Figura 5;
   AETSA cap. 4).
-- Tratamientos locales que indica la ginecóloga cuando los síntomas son genitourinarios
+- Tratamientos locales que indica el ginecólogo cuando los síntomas son genitourinarios
   (HNHU 6.4.2.1).
 - Ejercicios de suelo pélvico (Kegel) para los escapes de orina (HNHU Figura 5).
 - La actividad física y cuidar el peso se asocian a menos síntomas vaginales

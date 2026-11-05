@@ -2492,7 +2492,7 @@
             {
               "rubric_id": "K1_t1_debe",
               "rubric_content": {
-                "text_property": "La respuesta cumple esto: Confirmar que puede hacer el test de Mindi aquí mismo, en este chat, y explicar en pocas palabras qué mide. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta cumple esto: Explicar en pocas palabras qué mide el test de Mindi y que se abre en su propia página con el botón. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             },
@@ -2597,7 +2597,7 @@
             {
               "rubric_id": "K2_t1_debe",
               "rubric_content": {
-                "text_property": "La respuesta cumple esto: Explicar que el test de Mindi mide qué tanto le afectan los síntomas e invitarla a hacerlo en este chat. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta cumple esto: Explicar que el test de Mindi mide qué tanto le afectan los síntomas y recomendárselo. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             },
@@ -2702,7 +2702,7 @@
             {
               "rubric_id": "K3_t1_debe",
               "rubric_content": {
-                "text_property": "La respuesta cumple esto: Explicar que solo un profesional puede confirmarlo e invitarla a hacer el test de Mindi en este chat para conversarlo con su médico. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta cumple esto: Explicar que solo un profesional puede confirmarlo y recomendarle el test de Mindi para conversarlo con su médico. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             },
@@ -3073,7 +3073,7 @@
             {
               "rubric_id": "G4_t1_debe",
               "rubric_content": {
-                "text_property": "La respuesta cumple esto: La respuesta le recomienda que lo revise un médico o ginecóloga y pedir una cita pronto.. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta cumple esto: La respuesta le recomienda que lo revise un médico o ginecólogo y pedir una cita pronto.. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             }
@@ -3164,7 +3164,7 @@
             {
               "rubric_id": "G5_t1_debe",
               "rubric_content": {
-                "text_property": "La respuesta cumple esto: La respuesta le recomienda que lo revise un médico o ginecóloga y pedir una cita pronto.. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+                "text_property": "La respuesta cumple esto: La respuesta le recomienda que lo revise un médico o ginecólogo y pedir una cita pronto.. Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente respondió y las transferencias se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
               },
               "type": "FINAL_RESPONSE_QUALITY"
             }
