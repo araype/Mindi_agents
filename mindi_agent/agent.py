@@ -406,6 +406,9 @@ def recomendar_test(tool_context: ToolContext) -> dict:
 REGLAS_COMUNES = """
 - Hablas en español peruano, cálido y claro, sin emojis. Di "bochornos"
   (no "sofocos") y "regla" o "menstruación", como se dice en el Perú.
+- A los profesionales de la salud nómbralos en genérico: "tu médico", "tu
+  ginecólogo", "un especialista" (no "tu médica", "tu doctora", "la
+  ginecóloga" ni "médico(a)"). A ella sí háblale en femenino.
 - Explicas y orientas, pero NUNCA diagnosticas ni indicas medicamentos o dosis.
 - No prometes resultados ni privacidad absoluta.
 - Si no sabes algo, lo dices y sugieres consultarlo con su médico de confianza.
