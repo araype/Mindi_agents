@@ -292,12 +292,12 @@ NOTAS_REPORTE = [
      "temperatura cuando bajan los estrógenos. Son una respuesta física real y muy "
      "frecuente en esta etapa."),
     ("Corazón", "Algunas mujeres sienten el corazón acelerado durante un bochorno. "
-     "Coméntalo con tu médico(a), sobre todo si te pasa a menudo. Si viene con dolor "
+     "Coméntalo con tu médico, sobre todo si te pasa a menudo. Si viene con dolor "
      "o presión en el pecho, falta de aire o mareo, acude a emergencias o llama al "
      "106 (SAMU)."),
     ("Músculos y articulaciones", "Muchas mujeres notan dolores articulares en esta "
      "etapa. Pueden influir los cambios hormonales, pero también la edad y la "
-     "actividad física, así que vale la pena revisarlo con tu médico(a)."),
+     "actividad física, así que vale la pena revisarlo con tu médico."),
     ("Sueño", "Los problemas de sueño son frecuentes en esta etapa, sobre todo cuando "
      "los bochornos o la sudoración nocturna te despiertan. También pueden influir el "
      "estrés y otros factores."),
@@ -311,7 +311,7 @@ NOTAS_REPORTE = [
      "cambios en el cuerpo y en la vida. Si te limita en tu día a día, un profesional "
      "de salud mental puede ayudarte."),
     ("Cansancio", "El cansancio es muy común en esta etapa y se relaciona con el sueño, "
-     "el ánimo y otros cambios. Si es intenso o no mejora, coméntalo con tu médico(a), "
+     "el ánimo y otros cambios. Si es intenso o no mejora, coméntalo con tu médico, "
      "porque también puede tener otras causas."),
     ("Deseo sexual", "Los cambios en el deseo sexual son comunes en esta etapa, y pueden "
      "influir factores físicos, como la sequedad, y emocionales. No significa que algo "
@@ -319,7 +319,7 @@ NOTAS_REPORTE = [
     ("Al orinar", "Los cambios al orinar se relacionan con la baja de estrógenos, que "
      "afecta los tejidos de la zona. Son más comunes de lo que se habla y tienen manejo."),
     ("Sequedad íntima", "La sequedad íntima ocurre porque esos tejidos también dependen "
-     "de los estrógenos. Hay opciones simples que puedes comentar con tu médico(a)."),
+     "de los estrógenos. Hay opciones simples que puedes comentar con tu médico."),
 ]
 
 

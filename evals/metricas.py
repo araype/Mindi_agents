@@ -5,7 +5,7 @@ evaluador de respuestas ignora porque solo lee las de tipo
 FINAL_RESPONSE_QUALITY:
 - AGENTE_ESPERADO: agentes aceptados separados por "|", p. ej. "hormonal|mindi".
 - MENSAJE_FIJO: "autolesion", "emergencia", "evaluacion" o "ninguno".
-- OFRECER_TEST: "si" cuando el agente debe llamar a la herramienta ofrecer_test.
+- OFRECER_TEST: "si" cuando el agente debe llamar a la herramienta recomendar_test.
 """
 
 from typing import Optional
@@ -179,6 +179,6 @@ def ofrece_test_correcto(
         if _esperado(actual, OFRECER_TEST) != "si":
             puntajes.append(1.0)
             continue
-        llamo = "ofrecer_test" in herramientas_llamadas(actual)
+        llamo = "recomendar_test" in herramientas_llamadas(actual)
         puntajes.append(1.0 if llamo else 0.0)
     return _resultado(actual_invocations, esperadas, puntajes)
