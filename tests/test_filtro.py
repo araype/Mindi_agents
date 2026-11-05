@@ -365,6 +365,8 @@ class HerramientaRecomendarTest(unittest.TestCase):
         for agente in (root_agent, psicologia, hormonal, ginecologia):
             with self.subTest(agente=agente.name):
                 self.assertIn(recomendar_test, agente.tools)
+                from mindi_agent.agent import clasificar_tema
+                self.assertIn(clasificar_tema, agente.tools)
 
     def test_muestra_el_boton_como_maximo_dos_veces(self):
         from mindi_agent.agent import recomendar_test
@@ -411,3 +413,14 @@ class TemaInicial(unittest.TestCase):
     def test_el_contexto_del_peso_no_habla_de_bajar_de_peso(self):
         from mindi_agent.agent import CONTEXTO_TEMA
         self.assertIn("nunca de bajar de peso", CONTEXTO_TEMA["peso"])
+
+
+class ClasificarTema(unittest.TestCase):
+    def test_solo_etiquetas_de_la_lista(self):
+        from mindi_agent.agent import clasificar_tema, TEMAS_CHAT
+        self.assertEqual(len(TEMAS_CHAT), 11)
+        for t in TEMAS_CHAT:
+            self.assertEqual(clasificar_tema(t), {"tema": t})
+        for t in ("Sueño", "me duele la cabeza", "", "bochornos y sueño"):
+            with self.subTest(t=t):
+                self.assertEqual(clasificar_tema(t), {"tema": "otro"})

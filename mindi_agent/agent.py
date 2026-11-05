@@ -405,6 +405,25 @@ CONOCIMIENTO_COMUN = _ficha("comun")
 # ("Haz el test de 5 min →") y nunca recibe URLs ni HTML del agente.
 MAX_RECOMENDACIONES_TEST = 2
 
+# Temas de las preguntas (nivel 1 de la investigación, aprobado el 5 nov. 2026): el agente elige UNA
+# etiqueta de esta lista por cada mensaje de la usuaria, en la misma respuesta (sin enviar texto
+# adicional a nadie). La web guarda solo la etiqueta, sin texto ni identificadores (tabla chat_topics).
+TEMAS_CHAT = (
+    "bochornos", "sueno", "animo", "peso", "vida_intima", "terapia_hormonal",
+    "remedios_naturales", "edad_inicio", "duracion", "trabajo", "otro",
+)
+
+
+def clasificar_tema(tema: str) -> dict:
+    """Registra de qué trata el mensaje de la usuaria, con UNA etiqueta de esta lista:
+    bochornos, sueno, animo, peso, vida_intima, terapia_hormonal, remedios_naturales,
+    edad_inicio, duracion, trabajo u otro.
+
+    Llámala una vez por cada mensaje de la usuaria, antes de escribir tu respuesta.
+    """
+    # La etiqueta que no esté en la lista se guarda como "otro": nunca texto libre.
+    return {"tema": tema if tema in TEMAS_CHAT else "otro"}
+
 
 def recomendar_test(tool_context: ToolContext) -> dict:
     """Muestra debajo de tu respuesta el botón "Haz el test de 5 min", que
@@ -458,6 +477,9 @@ REGLAS_COMUNES = """
   respuesta que primero resuelva su duda y termine con la recomendación; no
   escribas un texto antes de llamarla. Si la herramienta dice que no
   corresponde, no recomiendes el test en esa respuesta.
+- Tema del mensaje: en cada mensaje de la usuaria llama una vez a la herramienta
+  clasificar_tema con la etiqueta de la lista que mejor lo describa (si no calza
+  ninguna, "otro"). Llámala antes de escribir y no la menciones en tu respuesta.
 - El test se hace en su propia página, no en este chat: no le hagas tú las
   preguntas del test ni escribas enlaces o direcciones web. Recomiéndalo como
   máximo dos veces por conversación; si no quiere, sigue respondiendo sus
@@ -571,7 +593,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[recomendar_test],
+    tools=[recomendar_test, clasificar_tema],
 )
 
 # ---------------------------------------------------------------------------
@@ -614,7 +636,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[recomendar_test],
+    tools=[recomendar_test, clasificar_tema],
 )
 
 # ---------------------------------------------------------------------------
@@ -652,7 +674,7 @@ Cómo respondes:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[recomendar_test],
+    tools=[recomendar_test, clasificar_tema],
 )
 
 # ---------------------------------------------------------------------------
@@ -742,5 +764,5 @@ Qué respondes tú:
     before_model_callback=filtro_banderas_rojas,
     before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[recomendar_test],
+    tools=[recomendar_test, clasificar_tema],
 )
