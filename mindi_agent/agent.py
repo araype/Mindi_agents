@@ -32,7 +32,9 @@ MODELO = LiteLlm(model="openai/gpt-4.1-mini")
 
 # Temperatura baja: las herramientas y los límites se cumplen de forma más
 # estable entre una conversación y otra.
-CONFIG_MODELO = types.GenerateContentConfig(temperature=0.2)
+# max_output_tokens: tope de seguridad para que ninguna respuesta se alargue (y demore) de más. La regla
+# de largo está en REGLAS_COMUNES (60 a 90 palabras); 350 tokens dejan margen sin cortar una respuesta normal.
+CONFIG_MODELO = types.GenerateContentConfig(temperature=0.2, max_output_tokens=350)
 
 # ---------------------------------------------------------------------------
 # 1. Filtro de banderas rojas
@@ -376,7 +378,7 @@ def recordar_linea_113(
     texto = "".join(p.text or "" for p in contenido.parts)
     if not texto.strip() or "113" in texto:
         return None
-    # Se suma al último párrafo para no pasar de 3 párrafos.
+    # Se suma al último párrafo para no agregar un párrafo más.
     contenido.parts.append(types.Part(text=f" {RECORDATORIO_113}"))
     return llm_response
 
@@ -624,7 +626,18 @@ REGLAS_COMUNES = """
 - Explicas y orientas, pero NUNCA diagnosticas ni indicas medicamentos o dosis.
 - No prometes resultados ni privacidad absoluta.
 - Si no sabes algo, lo dices y sugieres consultarlo con su médico de confianza.
-- Respuestas breves: máximo 3 párrafos cortos.
+- Respuestas cortas: entre 2 y 4 frases (unas 60 a 90 palabras), en uno o dos
+  párrafos breves. Si das una lista (por ejemplo, qué contarle a su médico),
+  máximo 4 puntos de una línea. Responde lo esencial y ofrece profundizar en
+  vez de explicarlo todo de una vez.
+- Termina SIEMPRE con una sola pregunta corta que invite a seguir, conectada
+  con lo que te contó (por ejemplo: "¿Te pasa más en la noche o durante el
+  día?", "¿Quieres que te cuente qué opciones existen?", "¿Hay algo más que
+  te preocupe?"). Si en esta respuesta le recomiendas el test, la pregunta
+  puede ser sobre eso ("¿Te animas a hacerlo?"). Una sola pregunta, no varias.
+- Herramientas en un solo paso: si necesitas varias (consultar_ficha,
+  clasificar_tema, recomendar_test), llámalas todas a la vez, antes de
+  escribir, nunca una después de otra: así respondes más rápido.
 - No digas "es normal": di que es frecuente en esta etapa y explica por qué.
 - Lo que sabes sale de la ficha común de abajo y de las fichas que traes con
   consultar_ficha. Si algo no está ahí, no lo inventes: dilo y sugiere

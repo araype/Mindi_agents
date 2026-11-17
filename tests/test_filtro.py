@@ -452,3 +452,18 @@ class InstruccionDelAgente(unittest.TestCase):
                 self.assertIn(clave, instruccion)
         self.assertNotIn("ofrecer_test", instruccion)
         self.assertNotIn("aquí mismo, en este chat", instruccion)
+
+
+class LargoYRepregunta(unittest.TestCase):
+    """Fix pendiente (17 nov. 2026): respuestas largas y lentas, y algunas sin pregunta para seguir."""
+
+    def test_reglas_de_largo_repregunta_y_herramientas_en_un_paso(self):
+        instruccion = root_agent.instruction
+        for clave in ("entre 2 y 4 frases", "Termina SIEMPRE con una sola pregunta corta",
+                      "llámalas todas a la vez"):
+            with self.subTest(clave=clave):
+                self.assertIn(clave, instruccion)
+        self.assertNotIn("máximo 3 párrafos", instruccion)
+
+    def test_tope_de_tokens_de_salida(self):
+        self.assertEqual(root_agent.generate_content_config.max_output_tokens, 350)
