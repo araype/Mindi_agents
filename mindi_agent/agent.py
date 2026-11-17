@@ -242,6 +242,71 @@ RECOMENDACION_MEDICO = {
 }
 
 
+# Detalle del reporte que la web manda junto con los puntajes (17 nov. 2026): los síntomas que marcó con
+# más intensidad, sus metas, su edad y cómo está su regla. Todo se valida contra estas listas cerradas
+# (las mismas de la web: MRS_ITEMS, GOAL_OPTIONS y las opciones del test); lo que no calce se ignora, así
+# que a las instrucciones nunca llega texto libre.
+SINTOMAS_MRS = {
+    "p3": "bochornos o calores",
+    "p4": "molestias del corazón (palpitaciones)",
+    "p5": "dolores musculares o articulares",
+    "p6": "problemas de sueño",
+    "p7": "ánimo decaído",
+    "p8": "irritabilidad",
+    "p9": "ansiedad",
+    "p10": "cansancio físico o mental",
+    "p11": "cambios en el deseo o la vida sexual",
+    "p12": "molestias al orinar",
+    "p13": "sequedad o molestia íntima",
+}
+INTENSIDAD = {2: "moderado", 3: "fuerte", 4: "muy fuerte"}
+METAS = (
+    "Manejar la perimenopausia o menopausia",
+    "Detener los sofocos o sudores nocturnos",
+    "Dormir mejor",
+    "Tener claridad mental y concentración",
+    "Controlar mi peso",
+    "Mejorar mi ánimo o ansiedad",
+    "Mejorar mi vida íntima (libido, comodidad)",
+    "Aliviar el dolor articular",
+    "Aliviar la sequedad vaginal",
+)
+EDADES = ("Menor de 40", "40 a 45", "46 a 52", "Mayor de 52")
+CICLOS = (
+    "Sigue regular",
+    "Es irregular (varía o se retrasa)",
+    "Más de 60 días sin regla",
+    "Más de 12 meses sin regla",
+    "Me hicieron una histerectomía",
+)
+MAX_SINTOMAS = 6
+
+
+def detalle_reporte(resultado: dict) -> list:
+    """Síntomas, metas, edad y regla del reporte → frases para la lectura (solo valores conocidos)."""
+    partes = []
+    sintomas = []
+    for item in resultado.get("sintomas") or []:
+        if not isinstance(item, dict):
+            continue
+        nombre = SINTOMAS_MRS.get(item.get("id"))
+        nivel = item.get("nivel")
+        if nombre and isinstance(nivel, int) and not isinstance(nivel, bool) and nivel in INTENSIDAD:
+            sintomas.append((nivel, nombre))
+    if sintomas:
+        sintomas.sort(key=lambda x: -x[0])
+        lista = ", ".join(f"{nombre} ({INTENSIDAD[nivel]})" for nivel, nombre in sintomas[:MAX_SINTOMAS])
+        partes.append(f"síntomas que marcó con más intensidad: {lista}")
+    metas = [m for m in METAS if m in (resultado.get("metas") or [])]
+    if metas:
+        partes.append("sus metas: " + ", ".join(m.lower() for m in metas))
+    if resultado.get("edad") in EDADES:
+        partes.append(f"edad: {resultado['edad'].lower()} años")
+    if resultado.get("ciclo") in CICLOS:
+        partes.append(f"su regla: {resultado['ciclo'].lower()}")
+    return partes
+
+
 def nivel_test(resultado: dict, alteradas: list) -> str:
     """Nivel del test con la misma regla que la web (computeLevel en mrs.js).
 
@@ -313,6 +378,7 @@ def lectura_mrs(resultado) -> Optional[str]:
     else:
         clave = nivel_test(resultado, alteradas)
     partes.append(f'recomendación que vio en su resultado: "{RECOMENDACION_MEDICO[clave]}"')
+    partes.extend(detalle_reporte(resultado))
 
     return "; ".join(partes)
 
@@ -646,7 +712,10 @@ REGLAS_COMUNES = """
   contextualizar sin recitar números ni usar términos internos ("ficha",
   "área", "subescala", "alterada"). Si trae la recomendación que vio en su
   resultado, no la contradigas: si habla de ir al médico, repítela con tus
-  palabras.
+  palabras. Si la lectura trae los síntomas que marcó, sus metas, su edad o
+  cómo está su regla, úsalos para responderle de forma personal (por ejemplo,
+  "como marcaste los bochornos como fuertes…"), sin pedirle que te los repita
+  y sin recitarlos todos.
 - Test de Mindi: primero responde su duda, en lenguaje simple. Si la lectura
   de su test está vacía y la conversación trata de sus síntomas o de qué tanto
   le afectan (o ya respondiste una o dos dudas), al final de tu respuesta
