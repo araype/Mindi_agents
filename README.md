@@ -10,41 +10,46 @@ AI companion agent for [Mindi](https://github.com/araype/Mindi), built with [Goo
 flowchart TD
     U[User message] --> F{Red-flag filter<br/>rule-based, no LLM}
     F -- emergency or<br/>medical check needed --> A[Fixed, gentle alert message]
-    F -- no flags --> M[Mindi coordinator]
-    M --> P[Psychology]
-    M --> H[Hormonal]
-
-    M --> G[Gynecology]
+    F -- no flags --> M[Mindi agent]
+    M -. consultar_ficha .-> K[(Topic sheets:<br/>animo, cuerpo, intima)]
+    M -. preparar_consulta .-> C[What to tell the doctor]
+    M -. recomendar_test .-> T[Web shows the test button]
+    M -. clasificar_tema .-> W[(Web: chat_topics)]
 ```
 
-1. **Red-flag filter.** A `before_model_callback` checks every message against fixed phrase lists *before* calling the model. If it matches, it returns a predefined message (self-harm support, urgent care, or medical evaluation) and the model is never called. It is attached to every agent, so it keeps working after a transfer. Colloquial uses ("estos bochornos van a matarme") are removed before matching, and physical or evaluation phrases are ignored when one of the three previous words is a negation ("no tengo dolor de pecho"). Negations never apply to self-harm phrases. The alert stays in the agents' instructions for the next 3 user messages and then expires.
-2. **Coordinator (`mindi`).** Answers general questions (what perimenopause is, what the test measures, how to use the report) and routes symptom questions to a specialist. It runs on `openai/gpt-4.1-mini`: with `gpt-4o-mini` it often answered symptom questions itself instead of transferring.
-3. **Specialist sub-agents.** Each one maps to a subscale of the Menopause Rating Scale (MRS) and runs on `openai/gpt-4o-mini`:
+1. **Red-flag filter.** A `before_model_callback` checks every message against fixed phrase lists *before* calling the model. If it matches, it returns a predefined message (self-harm support, urgent care, or medical evaluation) and the model is never called. Colloquial uses ("estos bochornos van a matarme") are removed before matching, and physical or evaluation phrases are ignored when one of the three previous words is a negation ("no tengo dolor de pecho"). Negations never apply to self-harm phrases. The alert stays in the agent's instructions for the next 3 user messages and then expires.
+2. **One agent (`mindi`)** on `openai/gpt-4.1-mini` talks to the user. It answers greetings, general questions (what perimenopause is, what the test measures, how to use the report) and off-topic messages with the common sheet it always has. For anything about a symptom, mood or treatment it first calls a tool to fetch the right topic sheet.
+3. **Tools.**
 
-| Agent | Covers |
+| Tool | What it does |
 |---|---|
-| `psicologia` | Mood, irritability, anxiety, mental fatigue, insomnia that comes with worry, sadness or anxiety |
-| `hormonal` | Hot flashes, night sweats (including waking up hot or sweating), palpitations, joint and muscle pain, period changes, general questions about hormone therapy |
-| `ginecologia` | Vaginal dryness, sexual health, urinary symptoms |
+| `consultar_ficha(tema)` | Returns the knowledge for one topic and how to answer on it. Topics (fixed names, the web reads them from the events): `animo`, `sueno`, `bochornos_fisicos`, `terapia_hormonal`, `intima_urinaria`. Mixed symptoms mean two calls, so one answer can cover both. Records the topics in `fichas_consultadas`. |
+| `preparar_consulta()` | Gathers what she should tell her doctor: the MRS reading, the topics discussed in this session, the "Para preparar la consulta" section of those sheets and a few points for any visit. The model turns it into a short list. |
+| `recomendar_test()` | Asks the web to show the "Haz el test de 5 min →" button, which opens the test on its own page. The tool applies the rules (at most twice per conversation, never if there is already an MRS reading or a recent red-flag alert) and returns `mostrar_boton`; the web only draws the button when it is `true`. |
+| `clasificar_tema(tema)` | One label per user message from a closed list (`bochornos`, `sueno`, `animo`, `peso`, `vida_intima`, `terapia_hormonal`, `remedios_naturales`, `edad_inicio`, `duracion`, `trabajo`, `otro`); anything else becomes `otro`. The web stores only the label (table `chat_topics`), never the text. |
 
-Sleep is routed by cause: waking up from hot flashes or night sweats goes to `hormonal`; insomnia with worry, sadness or anxiety goes to `psicologia`; if the cause is unclear, the coordinator asks first.
+Sleep always uses `sueno`, which combines the mood sheet and the hot-flash section, and Mindi answers by cause: hot flashes or night sweats, or worry, sadness or anxiety; if the cause is unclear, it asks first. Asking for a pill, supplement or dose goes to `terapia_hormonal`, so `bochornos_fisicos` does not even contain the hormone therapy section.
 
-All agents share the same rules: Peruvian Spanish, warm and brief, no emojis, no diagnoses, no absolute promises.
+The agent follows shared rules: Peruvian Spanish, warm and brief, no emojis, no diagnoses, no absolute promises.
 
-4. **Knowledge sheets.** Each agent's instruction includes short sheets in `mindi_agent/conocimiento/` (`comun.md` plus one per specialist). They summarize the HNHU 2024 climacteric guideline (primary source) and the AETSA 2015 guideline (complement) in patient-friendly language, citing the section of each claim. They deliberately leave out drug names, doses and the "therapeutic window". The sheets are the only clinical knowledge the agents get, so a clinician should review any change to them. Curly braces are not allowed in the sheets because ADK treats `{name}` as a state variable.
-5. **MRS reading.** If the session state contains `resultado_mrs`, a `before_agent_callback` turns it into `lectura_mrs` using the HNHU cut-offs (somatic ≥8, psychological ≥6, urogenital ≥3, total ≥8 / ≥15). Subscales are compared in proportion to their maximum to pick the area that affects her most. The model reads that sentence instead of interpreting raw numbers.
+4. **Knowledge sheets.** `mindi_agent/conocimiento/` holds `comun.md` (always in the instruction) and three sheets that `consultar_ficha` combines into topics (`FICHAS` in `agent.py`: a whole sheet or some of its `##` sections): `psicologia.md` → `animo` and `sueno`; `hormonal.md` → `sueno`, `bochornos_fisicos` and `terapia_hormonal`; `ginecologia.md` → `intima_urinaria`. The files keep the names the medical team knows. A test checks that every section reaches some topic. They summarize the HNHU 2024 climacteric guideline (primary source) and the AETSA 2015 guideline (complement) in patient-friendly language, citing the section of each claim. They deliberately leave out drug names, doses and the "therapeutic window". The sheets are the only clinical knowledge the agent gets, so a clinician should review any change to them. Curly braces are not allowed in the sheets because ADK treats `{name}` as a state variable.
+5. **MRS reading.** If the session state contains `resultado_mrs`, a `before_agent_callback` turns it into `lectura_mrs` using the HNHU cut-offs (somatic ≥8, psychological ≥6, urogenital ≥3, total ≥8 / ≥15). Subscales are compared in proportion to their maximum to pick what affects her most and which sheet to consult. The model reads that sentence instead of interpreting raw numbers.
+
+### Why one agent and not one per specialty
+
+Until October 2026 there was a coordinator that transferred each message to a `psicologia`, `hormonal` or `ginecologia` sub-agent. They shared the model, the rules and the tools; only the sheet changed. The routing cost an extra model call per message, needed guards against loops and double transfers, and was behind several eval failures, while users often mix symptoms from several MRS subscales in one message. Now the sheet is fetched by a tool instead. Add another agent only for a different role (for example, a safety reviewer), not for another topic.
 
 ## Project structure
 
 ```
 mindi_agent/
 ├── __init__.py        # from . import agent
-├── agent.py           # filter, MRS reading, coordinator and sub-agents (root_agent)
-├── conocimiento/      # knowledge sheets injected into each agent's instruction
+├── agent.py           # filter, MRS reading, tools and the agent (root_agent)
+├── conocimiento/      # knowledge sheets: common one in the instruction, topic ones via consultar_ficha
 ├── requirements.txt
 └── .env.example       # copy to .env for local testing
 tests/
-└── test_filtro.py     # filter, MRS reading and transfer guards, no model calls
+└── test_filtro.py     # filter, MRS reading and tools, no model calls
 evals/
 ├── banco_preguntas_mindi.md   # the team's question bank (source of truth)
 ├── generar_evalset.py         # bank -> mindi.evalset.json
@@ -67,21 +72,20 @@ python -m unittest discover -s tests -v
 
 The cases use the IDs of the team's question bank (A1, G3, J1...).
 
-Sub-agents hand the conversation back when the topic changes: to another specialist, or to `mindi` for general questions. Each one only sees the *other* areas in its instructions. A `before_tool_callback` blocks any transfer to itself (which would otherwise crash the request in ADK) and allows only one transfer per user message, so the area that receives a message answers it instead of passing it on again.
-
 After a self-harm alert, an `after_model_callback` appends a fixed reminder of Línea 113, opción 5, to any answer that does not mention it, for as long as the alert is active.
 
 ## Evals
 
-The question bank in `evals/banco_preguntas_mindi.md` is turned into an `adk eval` set. Every case is checked with three metrics:
+The question bank in `evals/banco_preguntas_mindi.md` is turned into an `adk eval` set. Every case is checked with four metrics:
 
 | Metric | What it checks | How |
 |---|---|---|
-| `agente_correcto` | The agent that answered is one the bank accepts | Code, no model |
+| `ficha_correcta` | The agent consulted the sheet(s) the bank expects ("Ficha" column), or none when it should just answer or ask | Code, no model |
 | `mensaje_fijo_correcto` | The red-flag filter returned the expected fixed message, or none | Code, exact text |
+| `herramienta_correcta` | The agent called the tool the bank expects ("Llama a" column: `recomendar_test`, `preparar_consulta`) | Code, no model |
 | `respuesta_cumple_banco` | The answer meets the general criteria and the "Debe" / "No debe" columns | `gpt-4o` as judge, with rubrics |
 
-Multi-turn cases (I) run as one conversation, and J cases start with `resultado_mrs` in the session state. B2 was adjusted after the bank was written (sleep rule: the coordinator may ask first); that change is in `AJUSTES` in `generar_evalset.py`.
+Multi-turn cases (I) run as one conversation, and J cases start with `resultado_mrs` in the session state. B2 was adjusted after the bank was written (sleep rule: Mindi may ask first); that change is in `AJUSTES` in `generar_evalset.py`.
 
 Setup (once, in the same virtualenv as the agent):
 
@@ -116,7 +120,7 @@ If a run fails with `RateLimitError: You have no credits remaining`, the OpenAI 
 
 ## Run locally
 
-Requirements: Python 3.10+ and an OpenAI API key from the [OpenAI platform](https://platform.openai.com/api-keys). The agents use OpenAI models through LiteLLM (`MODELO` and `MODELO_COORDINADOR` in `agent.py`); to switch back to Gemini, change them and use `GOOGLE_API_KEY` instead.
+Requirements: Python 3.10+ and an OpenAI API key from the [OpenAI platform](https://platform.openai.com/api-keys). The agent uses an OpenAI model through LiteLLM (`MODELO` in `agent.py`); to switch back to Gemini, change it and use `GOOGLE_API_KEY` instead.
 
 ```bash
 pip install -r mindi_agent/requirements.txt
@@ -124,16 +128,18 @@ cp mindi_agent/.env.example mindi_agent/.env   # then paste your API key
 adk web
 ```
 
-Run `adk web` from the folder that **contains** `mindi_agent/`. Open the dev UI, pick `mindi_agent`, and check the events tab to see which agent handled each message.
+Run `adk web` from the folder that **contains** `mindi_agent/`. Open the dev UI, pick `mindi_agent`, and check the events tab to see which sheets and tools the agent used for each message.
 
 Suggested smoke tests:
 
 | Message | Expected |
 |---|---|
-| "¿Qué es la perimenopausia?" | Coordinator answers |
-| "Estoy muy irritable con mi familia" | Transfers to `psicologia` |
-| "Me dan bochornos en la noche" | Transfers to `hormonal` |
-| "Me duele cuando tengo relaciones" | Transfers to `ginecologia` |
+| "¿Qué es la perimenopausia?" | Answers without consulting a sheet |
+| "Estoy muy irritable con mi familia" | Calls `consultar_ficha("animo")` |
+| "Me dan bochornos en la noche" | Calls `consultar_ficha("bochornos_fisicos")` |
+| "¿Qué pastilla me tomo para los bochornos?" | Calls `consultar_ficha("terapia_hormonal")` |
+| "Me duele cuando tengo relaciones" | Calls `consultar_ficha("intima_urinaria")` |
+| "¿Qué le digo a mi ginecóloga?" | Calls `preparar_consulta()` |
 | "Tengo dolor de pecho" | Fixed emergency message, no model call |
 
 ## Deploy to Cloud Run
@@ -163,7 +169,7 @@ If the secret already exists, do not create it again. To change the key, add a n
 Deploy (one instance at most, no dev UI). Since the web's Phase 4 the service is **private**: only the
 web's server (`/api/agent` on Vercel) calls it, with a Google ID token from a service account that has
 `roles/run.invoker`. Use `--no-allow-unauthenticated` (see "Private Cloud Run" below). The command
-below still shows the old public flag for reference; replace it:
+below uses it:
 
 ```bash
 adk deploy cloud_run \
@@ -173,7 +179,7 @@ adk deploy cloud_run \
   --session_service_uri=memory:// \
   --artifact_service_uri=memory:// \
   ./mindi_agent \
-  -- --set-secrets=OPENAI_API_KEY=OPENAI_API_KEY:latest --max-instances=1 --allow-unauthenticated
+  -- --set-secrets=OPENAI_API_KEY=OPENAI_API_KEY:latest --max-instances=1 --no-allow-unauthenticated
 ```
 
 ### Private Cloud Run
@@ -215,9 +221,12 @@ curl -X POST $APP_URL/run_sse \
 
 We recommend calling the agent from a server-side route (for example, a Vercel API route) rather than directly from the browser.
 
+Every answer comes from the `mindi` author; there are no `transfer_to_agent` events anymore. Tool calls appear as `function_call` parts in the events: the web shows the test button when `recomendar_test` returns `mostrar_boton: true`, and stores the `clasificar_tema` label. If the session has `tema_inicial` (`peso` or `trabajo`, from `/chat?tema=`), `preparar_estado` turns it into a fixed context for the instructions; any other value is ignored. `preparar_consulta` returns data to the model, which writes the list as normal answer text; a card can be added later by detecting the call the same way.
+
 ## Roadmap
 
-- [ ] RAG over clinical guidelines (Supabase pgvector) as a tool for each specialist
+- [ ] RAG over clinical guidelines (Supabase pgvector) behind `consultar_ficha`
+- [ ] Symptom diary across visits (needs user accounts and consent in the web first)
 - [ ] Persistent sessions in Supabase Postgres
 - [x] Evaluation set built from the team's question bank (`adk eval`)
 - [ ] Add real user questions to the evaluation set

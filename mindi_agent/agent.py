@@ -2,10 +2,13 @@
 
 Estructura:
 - Filtro de banderas rojas (reglas fijas, se ejecuta ANTES de llamar al modelo).
-- Coordinador "mindi" que conversa y delega.
-- Subagentes "psicologia", "hormonal" y "ginecologia" (subescalas del MRS).
+- Un solo agente "mindi" que conversa con ella.
 - Lectura del test MRS con los puntos de corte de la guía del HNHU.
-- Fichas de conocimiento en conocimiento/*.md (resumen revisable de las guías).
+- Fichas de conocimiento en conocimiento/*.md (resumen revisable de las guías):
+  la común va en las instrucciones; las de cada tema las trae la herramienta
+  consultar_ficha cuando hace falta.
+- Herramientas: consultar_ficha, preparar_consulta, recomendar_test y clasificar_tema.
+- Tema inicial de la web (tema_inicial) como contexto fijo en las instrucciones.
 """
 
 import re
@@ -17,21 +20,21 @@ from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmRequest, LlmResponse
 from google.adk.models.lite_llm import LiteLlm
-from google.adk.tools.tool_context import ToolContext
+from google.adk.tools import ToolContext
 from google.genai import types
 
 # Modelo de OpenAI vía LiteLLM (requiere OPENAI_API_KEY en el .env).
 # Para volver a Gemini: MODELO = "gemini-flash-latest"
-MODELO = LiteLlm(model="openai/gpt-4o-mini")
+# gpt-4.1-mini y no gpt-4o-mini: con 4o-mini el coordinador de la versión
+# anterior respondía sin usar sus herramientas (4 de 16 casos bien, contra
+# 15 de 16 con 4.1-mini), y ahora todo depende de que llame a consultar_ficha.
+MODELO = LiteLlm(model="openai/gpt-4.1-mini")
 
-# El coordinador usa un modelo algo más capaz: con gpt-4o-mini respondía él
-# mismo en vez de transferir (4 de 16 casos de enrutamiento bien, contra 15
-# de 16 con gpt-4.1-mini). Los subagentes siguen con MODELO.
-MODELO_COORDINADOR = LiteLlm(model="openai/gpt-4.1-mini")
-
-# Temperatura baja: las transferencias y los límites se cumplen de forma más
+# Temperatura baja: las herramientas y los límites se cumplen de forma más
 # estable entre una conversación y otra.
-CONFIG_MODELO = types.GenerateContentConfig(temperature=0.2)
+# max_output_tokens: tope de seguridad para que ninguna respuesta se alargue (y demore) de más. La regla
+# de largo está en REGLAS_COMUNES (60 a 90 palabras); 350 tokens dejan margen sin cortar una respuesta normal.
+CONFIG_MODELO = types.GenerateContentConfig(temperature=0.2, max_output_tokens=350)
 
 # ---------------------------------------------------------------------------
 # 1. Filtro de banderas rojas
@@ -61,7 +64,7 @@ EMERGENCIA_FISICA = [
 ]
 
 # "trombosis" sola bloqueaba preguntas como "¿la terapia hormonal da
-# trombosis?", que debe responder el agente hormonal.
+# trombosis?", que el agente debe responder con el tema 'terapia_hormonal'.
 EVALUACION_MEDICA = [
     "sangrado despues de la menopausia", "sangro despues de la menopausia",
     "volvi a sangrar", "sangrado vaginal", "manche", "me volvio a bajar",
@@ -194,8 +197,8 @@ def actualizar_turno(state, invocation_id: str) -> None:
     """Cuenta los mensajes de la usuaria y vence las alertas antiguas.
 
     Recibe el estado de la sesión (o un dict en los tests). Cada mensaje de
-    la usuaria es una invocación nueva; los agentes que responden dentro del
-    mismo mensaje comparten el invocation_id y no suman.
+    la usuaria es una invocación nueva; si se llama más de una vez en el mismo
+    mensaje, el invocation_id es el mismo y no suma.
     """
     if state.get("invocacion_actual") != invocation_id:
         state["invocacion_actual"] = invocation_id
@@ -214,10 +217,10 @@ def actualizar_turno(state, invocation_id: str) -> None:
 # máximo de cada subescala (Anexo 1: 4 puntos por ítem). El código hace la
 # lectura para que el modelo no tenga que interpretar números.
 SUBESCALAS_MRS = {
-    # nombre: (punto de corte, máximo, agente que la atiende, tema para ella)
-    "somatico": (8, 16, "hormonal", "los síntomas físicos"),
-    "psicologico": (6, 16, "psicologia", "el ánimo, las emociones y el cansancio"),
-    "urogenital": (3, 12, "ginecologia", "la salud íntima y urinaria"),
+    # nombre: (punto de corte, máximo, ficha del tema, tema para ella)
+    "somatico": (8, 16, "bochornos_fisicos", "los síntomas físicos"),
+    "psicologico": (6, 16, "animo", "el ánimo, las emociones y el cansancio"),
+    "urogenital": (3, 12, "intima_urinaria", "la salud íntima y urinaria"),
 }
 
 
@@ -266,13 +269,13 @@ def lectura_mrs(resultado) -> Optional[str]:
         return None
 
     partes = []
-    alteradas = []  # (puntaje relativo, nombre, agente, tema)
-    for nombre, (corte, maximo, agente, tema) in SUBESCALAS_MRS.items():
+    alteradas = []  # (puntaje relativo, nombre, ficha, tema)
+    for nombre, (corte, maximo, ficha, tema) in SUBESCALAS_MRS.items():
         puntaje = resultado.get(nombre)
         if not _es_puntaje(puntaje, maximo):
             continue
         if puntaje >= corte:
-            alteradas.append((puntaje / maximo, nombre, agente, tema))
+            alteradas.append((puntaje / maximo, nombre, ficha, tema))
             estado = f"alterada (la guía marca {corte} o más)"
         else:
             estado = "sin alteración según la guía"
@@ -295,8 +298,8 @@ def lectura_mrs(resultado) -> Optional[str]:
     if alteradas:
         # Se compara en proporción al máximo: la urogenital tiene menos ítems.
         alteradas.sort(reverse=True)
-        _, _, agente, tema = alteradas[0]
-        partes.append(f"lo que más le afecta es {tema} (área: {agente})")
+        _, _, ficha, tema = alteradas[0]
+        partes.append(f"lo que más le afecta es {tema} (ficha: {ficha})")
     else:
         partes.append("ninguna área alterada")
 
@@ -338,7 +341,7 @@ def contexto_tema(tema) -> str:
 
 
 def preparar_estado(callback_context: CallbackContext) -> None:
-    """Antes de que responda cada agente: turno, alertas, lectura del MRS y tema inicial."""
+    """Antes de cada respuesta: turno, alertas, lectura del MRS y tema inicial."""
     actualizar_turno(callback_context.state, callback_context.invocation_id)
     lectura = lectura_mrs(callback_context.state.get("resultado_mrs"))
     if lectura:
@@ -367,7 +370,7 @@ def recordar_linea_113(
         return None
     contenido = llm_response.content
     # Solo la respuesta completa con texto; no los fragmentos del streaming
-    # ni las llamadas a herramientas (por ejemplo, una transferencia).
+    # ni las llamadas a herramientas (por ejemplo, a consultar_ficha).
     if llm_response.partial or not contenido or not contenido.parts:
         return None
     if any(p.function_call for p in contenido.parts):
@@ -375,7 +378,7 @@ def recordar_linea_113(
     texto = "".join(p.text or "" for p in contenido.parts)
     if not texto.strip() or "113" in texto:
         return None
-    # Se suma al último párrafo para no pasar de 3 párrafos.
+    # Se suma al último párrafo para no agregar un párrafo más.
     contenido.parts.append(types.Part(text=f" {RECORDATORIO_113}"))
     return llm_response
 
@@ -396,10 +399,176 @@ def _ficha(nombre: str) -> str:
 
 CONOCIMIENTO_COMUN = _ficha("comun")
 
+# Fichas que trae consultar_ficha. La clave es el tema que pide el modelo y
+# que lee la web en los eventos ({"tema": "animo"}): no cambiar los nombres
+# sin avisar a la web. Los archivos conservan el nombre del área que los
+# atendía cuando había un agente por área, que es como los conoce el equipo
+# médico.
+# tema: (fuentes, qué cubre, cómo responder en ese tema). Cada fuente es
+# (archivo, secciones): None trae la ficha entera; una tupla, solo esas
+# secciones "## " de la ficha.
+SECCIONES_TERAPIA = (
+    "Terapia hormonal (solo si ella pregunta por tratamientos)",
+    "Para preparar la consulta",
+    "Límites",
+)
+FICHAS = {
+    "animo": (
+        [("psicologia", None)],
+        "ánimo decaído, irritabilidad, ansiedad, llanto, cansancio mental y "
+        "olvidos",
+        """1. Valida lo que siente sin exagerar.
+2. Explica de forma simple por qué puede estar pasando en esta etapa.
+3. Da 1 o 2 ideas prácticas y seguras del día a día.
+4. Orienta sobre qué profesional buscar si persiste (psicología, medicina
+   general o ginecología), sin derivar como si fuera una cita.
+5. Si lo que cuenta sobre su ánimo es ambiguo (por ejemplo "ya no aguanto
+   más" o "estoy cansada de todo"), termina con una pregunta suave sobre cómo
+   se siente, sin asumir que piensa en hacerse daño.""",
+    ),
+    "sueno": (
+        [("psicologia", None), ("hormonal", ("Bochornos y sudores nocturnos",))],
+        "insomnio, despertares de madrugada, despertarse con calor o sudando, "
+        "o no poder apagar la cabeza para dormir",
+        """1. Si no está claro si se despierta por calores o sudores, o porque no
+   logra apagar la cabeza, pregúntale eso antes de dar consejos.
+2. Si la despiertan los bochornos o los sudores, explica que interrumpen el
+   sueño y da 1 o 2 medidas para las noches (dormitorio fresco, ropa de cama
+   ligera).
+3. Si viene con preocupación, tristeza o ansiedad, valida lo que siente y da
+   1 o 2 ideas para dormir mejor (horarios regulares, menos cafeína y alcohol
+   en la tarde).
+4. Nunca menciones pastillas para dormir ni otros medicamentos.
+5. Si persiste o le afecta el día a día, orienta a medicina general,
+   ginecología o psicología.""",
+    ),
+    "bochornos_fisicos": (
+        [("hormonal", (
+            "Cambios en la regla", "Bochornos y sudores nocturnos",
+            "Dolores musculares y articulares", "Huesos y corazón", "Límites",
+        ))],
+        "bochornos, sudoración, palpitaciones, dolores musculares y "
+        "articulares, cambios en la regla, huesos y corazón",
+        """1. Explica de forma simple qué está pasando en el cuerpo y por qué.
+2. Da 1 o 2 medidas seguras del día a día (ropa en capas, hidratación,
+   actividad física moderada, identificar desencadenantes).
+3. No menciones la terapia hormonal ni otros tratamientos, ni siquiera como
+   opción a futuro. Si ella pregunta por ellos, consulta 'terapia_hormonal'.
+4. Si los síntomas le afectan mucho, orienta a ginecología o medicina
+   general.""",
+    ),
+    "terapia_hormonal": (
+        [("hormonal", SECCIONES_TERAPIA)],
+        "terapia hormonal y otros tratamientos, y cuando pide un medicamento, "
+        "suplemento, pastilla o dosis",
+        """1. Explica que la terapia hormonal existe, que no es para todas y que
+   la decisión se toma con su médico según su historia. Menciona que el
+   tabaquismo, la migraña con aura, el antecedente de cáncer de mama o de
+   trombosis y el tiempo desde la menopausia influyen en esa decisión.
+2. Nunca recomiendes un medicamento, suplemento, dosis ni marca, ni le digas
+   que lo empiece, cambie o suspenda. Si pide qué tomar o cuánto, dile con
+   amabilidad que eso lo decide su médico y ofrécele las preguntas para la
+   consulta de la ficha.
+3. Orienta a ginecología o medicina general.""",
+    ),
+    "intima_urinaria": (
+        [("ginecologia", None)],
+        "sequedad vaginal, molestias o dolor en las relaciones, cambios en el "
+        "deseo, urgencia o escapes de orina e infecciones urinarias frecuentes",
+        """1. Usa un tono respetuoso y sin juicios; son temas que a muchas mujeres
+   les da vergüenza preguntar. Usa términos correctos, sin rodeos ni crudeza.
+2. Explica por qué estos cambios son frecuentes en esta etapa y que tienen
+   manejo; no tiene por qué "aguantarlos".
+3. Da 1 o 2 medidas generales y seguras (por ejemplo, que existen
+   lubricantes e hidratantes vaginales, ejercicios de suelo pélvico), sin
+   indicar marcas ni medicamentos.
+4. Orienta a ginecología para una evaluación, y sugiere qué contarle en la
+   consulta usando su reporte de Mindi.""",
+    ),
+}
+
+
+def _seccion(ficha: str, titulo: str) -> str:
+    """Texto de la sección '## titulo' de una ficha, o '' si no la tiene."""
+    coincidencia = re.search(
+        rf"^## {re.escape(titulo)}\n(.*?)(?=^## |\Z)", ficha, re.S | re.M
+    )
+    return coincidencia.group(1).strip() if coincidencia else ""
+
+
+def _texto_tema(fuentes) -> str:
+    partes = []
+    for archivo, secciones in fuentes:
+        texto = _ficha(archivo)
+        if secciones is None:
+            partes.append(texto.strip())
+            continue
+        for titulo in secciones:
+            cuerpo = _seccion(texto, titulo)
+            # Si alguien renombra una sección, que falle al cargar y no en silencio.
+            if not cuerpo:
+                raise ValueError(f"La ficha {archivo}.md no tiene la sección '{titulo}'.")
+            partes.append(f"## {titulo}\n{cuerpo}")
+    return "\n\n".join(partes)
+
+
+TEXTO_FICHAS = {tema: _texto_tema(fuentes) for tema, (fuentes, _, _) in FICHAS.items()}
+
 
 # ---------------------------------------------------------------------------
-# 1d. Recomendación del test de Mindi (handoff 10.5.1)
+# 1d. Herramientas
 # ---------------------------------------------------------------------------
+def consultar_ficha(tema: str, tool_context: ToolContext) -> dict:
+    """Trae lo que sabes de un tema de salud y cómo responder sobre él.
+
+    Llámala antes de responder sobre un síntoma, sobre cómo se siente o sobre
+    un tratamiento. Si ella mezcla dos temas, llámala una vez por cada uno.
+
+    Args:
+        tema: uno de "animo", "sueno", "bochornos_fisicos",
+            "terapia_hormonal" o "intima_urinaria".
+    """
+    if tema not in FICHAS:
+        return {"error": f"Tema desconocido. Usa uno de: {', '.join(FICHAS)}."}
+    # Para preparar_consulta.
+    consultadas = tool_context.state.get("fichas_consultadas") or []
+    if tema not in consultadas:
+        tool_context.state["fichas_consultadas"] = consultadas + [tema]
+    return {"ficha": TEXTO_FICHAS[tema], "como_responder": FICHAS[tema][2]}
+
+
+# Lo que se sugiere llevar a cualquier consulta. Sale de las fichas
+# (ginecologia.md y hormonal.md, "Para preparar la consulta").
+PARA_TODA_CONSULTA = [
+    "Desde cuándo tiene cada molestia y cuánto le afecta en su día a día.",
+    "La lista de lo que toma y sus antecedentes.",
+    "Su reporte de Mindi, si hizo el test.",
+]
+
+
+def preparar_consulta(tool_context: ToolContext) -> dict:
+    """Reúne lo necesario para armarle qué contarle a su médico en la consulta.
+
+    Llámala cuando pida ayuda para preparar su cita o qué decirle a su médico.
+    No recibe argumentos: usa su test y los temas de esta conversación.
+    """
+    # La web puede detectar esta llamada en los eventos, como recomendar_test.
+    estado = tool_context.state
+    temas = [t for t in estado.get("fichas_consultadas") or [] if t in FICHAS]
+    sugerencias = []
+    for tema in temas:
+        seccion = _seccion(TEXTO_FICHAS[tema], "Para preparar la consulta")
+        if seccion and seccion not in sugerencias:
+            sugerencias.append(seccion)
+    return {
+        "lectura_de_su_test": estado.get("lectura_mrs") or "No hizo el test de Mindi.",
+        "temas_conversados": [FICHAS[t][1] for t in temas],
+        "sugerencias_de_las_fichas": sugerencias,
+        "para_toda_consulta": PARA_TODA_CONSULTA,
+    }
+
+
+# Recomendación del test de Mindi (handoff 10.5.1).
 # El test no se hace en este chat: se abre en su propia página, en una sesión
 # nueva. El agente solo pide que se muestre el botón; la web lo dibuja
 # ("Haz el test de 5 min →") y nunca recibe URLs ni HTML del agente.
@@ -457,15 +626,27 @@ REGLAS_COMUNES = """
 - Explicas y orientas, pero NUNCA diagnosticas ni indicas medicamentos o dosis.
 - No prometes resultados ni privacidad absoluta.
 - Si no sabes algo, lo dices y sugieres consultarlo con su médico de confianza.
-- Respuestas breves: máximo 3 párrafos cortos.
+- Respuestas cortas: entre 2 y 4 frases (unas 60 a 90 palabras), en uno o dos
+  párrafos breves. Si das una lista (por ejemplo, qué contarle a su médico),
+  máximo 4 puntos de una línea. Responde lo esencial y ofrece profundizar en
+  vez de explicarlo todo de una vez.
+- Termina SIEMPRE con una sola pregunta corta que invite a seguir, conectada
+  con lo que te contó (por ejemplo: "¿Te pasa más en la noche o durante el
+  día?", "¿Quieres que te cuente qué opciones existen?", "¿Hay algo más que
+  te preocupe?"). Si en esta respuesta le recomiendas el test, la pregunta
+  puede ser sobre eso ("¿Te animas a hacerlo?"). Una sola pregunta, no varias.
+- Herramientas en un solo paso: si necesitas varias (consultar_ficha,
+  clasificar_tema, recomendar_test), llámalas todas a la vez, antes de
+  escribir, nunca una después de otra: así respondes más rápido.
 - No digas "es normal": di que es frecuente en esta etapa y explica por qué.
-- Lo que sabes sale de las fichas de abajo. Si algo no está ahí, no lo inventes:
-  dilo y sugiere consultarlo con su médico.
+- Lo que sabes sale de la ficha común de abajo y de las fichas que traes con
+  consultar_ficha. Si algo no está ahí, no lo inventes: dilo y sugiere
+  consultarlo con su médico.
 - Lectura de su test MRS: {lectura_mrs?}. Si hay lectura, úsala para
-  contextualizar sin recitar números ni usar términos internos ("área",
-  "subescala", "alterada", el nombre de un agente). Si trae la recomendación
-  que vio en su resultado, no la contradigas: si habla de ir al médico,
-  repítela con tus palabras.
+  contextualizar sin recitar números ni usar términos internos ("ficha",
+  "área", "subescala", "alterada"). Si trae la recomendación que vio en su
+  resultado, no la contradigas: si habla de ir al médico, repítela con tus
+  palabras.
 - Test de Mindi: primero responde su duda, en lenguaje simple. Si la lectura
   de su test está vacía y la conversación trata de sus síntomas o de qué tanto
   le afectan (o ya respondiste una o dos dudas), al final de tu respuesta
@@ -500,269 +681,81 @@ REGLAS_COMUNES = """
   menciones líneas de ayuda salvo que ella lo pida.
 """
 
-# Solo para los subagentes: devuelven el control cuando cambia el tema.
-# Cada uno ve únicamente las OTRAS áreas: si un agente intenta transferirse
-# a sí mismo, ADK lanza un error y la conversación se cae.
-TEMAS_POR_AREA = {
-    "psicologia": (
-        "ánimo, emociones, o insomnio con preocupación, tristeza o ansiedad"
-    ),
-    "hormonal": (
-        "síntomas físicos (incluido despertarse con calor o sudando), la regla"
-        " o tratamientos"
-    ),
-    "ginecologia": "salud íntima, sexual o urinaria",
-}
-
-
-def controlar_transferencias(tool, args: dict, tool_context) -> Optional[dict]:
-    """Bloquea transferencias hacia el mismo agente y una segunda por mensaje.
-
-    - Hacia sí mismo: el modelo a veces repite una transferencia que ve en el
-      historial, y ADK lanza un error.
-    - Una sola por mensaje: el área que recibe ya es la indicada. Sin esto,
-      por ejemplo, ginecología recibía "¿por qué me siento así?" por la
-      lectura del test y lo reenviaba a psicología.
-    Si devolvemos un resultado, ADK no ejecuta la herramienta: no hay
-    transferencia y el agente responde.
-    """
-    if tool.name != "transfer_to_agent":
-        return None
-    if args.get("agent_name") == tool_context.agent_name:
-        return {"resultado": "Ya eres esta área: responde tú a la usuaria."}
-    if tool_context.state.get("invocacion_transferida") == tool_context.invocation_id:
-        return {"resultado": "Ya te transfirieron este mensaje: responde tú."}
-    tool_context.state["invocacion_transferida"] = tool_context.invocation_id
-    return None
-
-
-def _cambio_de_tema(propia: str) -> str:
-    otras = "; ".join(
-        f"{tema} -> '{area}'"
-        for area, tema in TEMAS_POR_AREA.items()
-        if area != propia
-    )
-    autolesion = (
-        ""
-        if propia == "psicologia"
-        else "- Si la alerta reciente es 'autolesion', transfiere a 'psicologia'.\n"
-    )
-    return f"""
-Si cambia de tema (tú eres '{propia}'; nunca te transfieras a ti misma):
-{autolesion}- Si su nuevo mensaje es de otra área, transfiere a esa área sin
-  responder antes: {otras}.
-- Si es una duda general sobre esta etapa o sobre el test, o algo fuera de
-  tema, transfiere a 'mindi'.
-- Si sigue con un tema de tu área, responde tú con continuidad, sin repetir
-  lo que ya le explicaste.
-"""
+TEMAS = "\n".join(f"  - '{tema}': {cubre}." for tema, (_, cubre, _) in FICHAS.items())
 
 # ---------------------------------------------------------------------------
-# 3. Subagente de psicología
-# ---------------------------------------------------------------------------
-psicologia = Agent(
-    name="psicologia",
-    model=MODELO,
-    generate_content_config=CONFIG_MODELO,
-    description=(
-        "Atiende dudas sobre ánimo decaído, irritabilidad, ansiedad, "
-        "cansancio mental e insomnio que viene con preocupación, tristeza o "
-        "ansiedad (no poder apagar la cabeza) durante la perimenopausia y "
-        "menopausia. No atiende los despertares por bochornos o sudoración."
-    ),
-    instruction=f"""
-Eres la parte de Mindi que acompaña en temas emocionales durante la
-perimenopausia y menopausia, incluido el insomnio que viene con preocupación,
-tristeza o ansiedad.
-
-Cómo respondes:
-1. Valida lo que siente sin exagerar.
-2. Explica de forma simple por qué puede estar pasando en esta etapa.
-3. Da 1 o 2 ideas prácticas y seguras del día a día.
-4. Orienta sobre qué profesional buscar si persiste (psicología, medicina
-   general o ginecología), sin derivar como si fuera una cita.
-5. Si lo que cuenta sobre su ánimo es ambiguo (por ejemplo "ya no aguanto
-   más" o "estoy cansada de todo"), termina con una pregunta suave sobre cómo
-   se siente, sin asumir que piensa en hacerse daño.
-{_cambio_de_tema("psicologia")}
-{REGLAS_COMUNES}
-{CONOCIMIENTO_COMUN}
-{_ficha("psicologia")}
-""",
-    before_agent_callback=preparar_estado,
-    before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=controlar_transferencias,
-    after_model_callback=recordar_linea_113,
-    tools=[recomendar_test, clasificar_tema],
-)
-
-# ---------------------------------------------------------------------------
-# 4. Subagente hormonal (síntomas somáticos y dudas sobre tratamiento)
-# ---------------------------------------------------------------------------
-hormonal = Agent(
-    name="hormonal",
-    model=MODELO,
-    generate_content_config=CONFIG_MODELO,
-    description=(
-        "Atiende dudas sobre síntomas físicos de la perimenopausia y menopausia "
-        "(bochornos, sudoración nocturna, despertares por calor o sudor, "
-        "palpitaciones, dolores musculares y articulares, cambios en la "
-        "menstruación) y preguntas generales sobre la terapia hormonal y otras "
-        "opciones de tratamiento."
-    ),
-    instruction=f"""
-Eres la parte de Mindi que explica los cambios físicos y hormonales de esta
-etapa.
-
-Cómo respondes:
-1. Explica de forma simple qué está pasando en el cuerpo y por qué.
-2. Da 1 o 2 medidas seguras del día a día (ropa en capas, hidratación,
-   actividad física moderada, identificar desencadenantes).
-3. Si ella NO preguntó por terapia hormonal ni por tratamientos, no los
-   menciones en absoluto, ni siquiera como opción a futuro.
-   Si SÍ preguntó: explica que existe, que no es para todas
-   y que la decisión se toma con su médico según su historia. Menciona que el
-   tabaquismo, la migraña con aura, el antecedente de cáncer de mama o de
-   trombosis y el tiempo desde la menopausia influyen en esa decisión.
-   Nunca recomiendes un medicamento, dosis ni marca, ni le digas que lo
-   empiece, cambie o suspenda.
-4. Si los síntomas le afectan mucho, orienta a ginecología o medicina general.
-{_cambio_de_tema("hormonal")}
-{REGLAS_COMUNES}
-{CONOCIMIENTO_COMUN}
-{_ficha("hormonal")}
-""",
-    before_agent_callback=preparar_estado,
-    before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=controlar_transferencias,
-    after_model_callback=recordar_linea_113,
-    tools=[recomendar_test, clasificar_tema],
-)
-
-# ---------------------------------------------------------------------------
-# 5. Subagente de ginecología (síntomas urogenitales y sexualidad)
-# ---------------------------------------------------------------------------
-ginecologia = Agent(
-    name="ginecologia",
-    model=MODELO,
-    generate_content_config=CONFIG_MODELO,
-    description=(
-        "Atiende dudas sobre síntomas urogenitales y de salud sexual en la "
-        "perimenopausia y menopausia: sequedad vaginal, molestias o dolor en "
-        "las relaciones, cambios en el deseo, urgencia o escapes de orina e "
-        "infecciones urinarias frecuentes."
-    ),
-    instruction=f"""
-Eres la parte de Mindi que habla de salud íntima y urogenital en esta etapa.
-
-Cómo respondes:
-1. Usa un tono respetuoso y sin juicios; son temas que a muchas mujeres les
-   da vergüenza preguntar. Usa términos correctos, sin rodeos ni crudeza.
-2. Explica por qué estos cambios son frecuentes en esta etapa y que tienen
-   manejo; no tiene por qué "aguantarlos".
-3. Da 1 o 2 medidas generales y seguras (por ejemplo, que existen
-   lubricantes e hidratantes vaginales, ejercicios de suelo pélvico),
-   sin indicar marcas ni medicamentos.
-4. Orienta a ginecología para una evaluación, y sugiere qué contarle en la
-   consulta usando su reporte de Mindi.
-{_cambio_de_tema("ginecologia")}
-{REGLAS_COMUNES}
-{CONOCIMIENTO_COMUN}
-{_ficha("ginecologia")}
-""",
-    before_agent_callback=preparar_estado,
-    before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=controlar_transferencias,
-    after_model_callback=recordar_linea_113,
-    tools=[recomendar_test, clasificar_tema],
-)
-
-# ---------------------------------------------------------------------------
-# 6. Coordinador (root_agent es el nombre que ADK busca al desplegar)
+# 3. Agente (root_agent es el nombre que ADK busca al desplegar)
 # ---------------------------------------------------------------------------
 root_agent = Agent(
     name="mindi",
-    model=MODELO_COORDINADOR,
+    model=MODELO,
     generate_content_config=CONFIG_MODELO,
     description="Acompañante de Mindi para mujeres en perimenopausia y menopausia.",
     instruction=f"""
 Eres Mindi, una acompañante que ayuda a mujeres peruanas a entender sus
 síntomas de perimenopausia y menopausia y qué tanto les afectan.
 
-PRIMERO DECIDE SI DERIVAS (esto manda sobre todo lo demás):
-- Si el mensaje habla de un síntoma, de cómo se siente, de la regla, del
-  sueño, o pide un medicamento, suplemento, dosis o tratamiento, tu única
-  acción es llamar a la herramienta transfer_to_agent con el área que
-  corresponde (ver "A quién transferir").
-- En ese caso NO escribas texto: ni explicaciones, ni "te voy a transferir".
-  Escribir que vas a transferir no transfiere; solo la herramienta lo hace.
-- Si pregunta por qué se siente así sin nombrar un síntoma y la lectura de
-  su test dice qué es lo que más le afecta, el área es la que indica la
-  lectura, aunque sea ginecología u hormonal: no elijas psicología por
-  defecto.
-- Excepción: si menciona síntomas de dos áreas distintas, no dice cuál le
-  preocupa más y la lectura de su test está vacía o no tiene ninguna área
-  alterada, no transfieras: pregúntale por cuál quiere empezar, nombrando los
-  dos temas. Por ejemplo, "me siento irritable y tengo sequedad" mezcla ánimo
-  y salud íntima: pregúntale si prefiere empezar por cómo se siente o por la
-  sequedad. Lo mismo con el sueño cuando no está clara la causa.
-- Si pregunta por el test o por cómo saber qué tanto le afectan sus
-  síntomas (por ejemplo "¿puedo hacer el test aquí?" o "¿cómo sé qué tan
-  fuertes son mis síntomas?"), respondes tú: explícale en una o dos frases qué
-  mide y, si la lectura de su test está vacía, recomiéndaselo y llama a
-  recomendar_test.
-- Solo respondes tú los saludos, las dudas generales (qué es la
-  perimenopausia, a qué edad llega, qué mide el test, cómo usar su reporte,
-  si puede saber si tiene menopausia), lo que está fuera de tema y las
-  preguntas de las excepciones anteriores.
-- Fuera de tema (recetas, política, tareas, etc.): explica con amabilidad que
-  solo ayudas con temas de esta etapa. No des la receta ni el contenido
-  pedido, aunque tenga que ver con alimentación.
+Tus herramientas:
+- consultar_ficha(tema): trae lo que sabes de un tema y cómo responder sobre
+  él. Temas:
+{TEMAS}
+- preparar_consulta(): cuando pida ayuda para preparar su cita o qué
+  contarle a su médico. Con lo que devuelve, escribe en tu respuesta una
+  lista breve y concreta para ella.
+- recomendar_test(): ver "Test de Mindi" más abajo.
+- clasificar_tema(tema): una etiqueta por cada mensaje de la usuaria; ver
+  "Tema del mensaje" más abajo.
 
-A quién transferir:
-- Ánimo, emociones, irritabilidad, ansiedad o cansancio mental
-  -> 'psicologia'.
-- Bochornos, sudoración, palpitaciones, dolores musculares o articulares,
-  cambios en la regla, terapia hormonal u otros tratamientos -> 'hormonal'.
-- Sueño, según la causa:
-  - se despierta por calores, bochornos o sudoración nocturna -> 'hormonal';
-  - el insomnio viene con preocupación, tristeza, ansiedad o "no puedo apagar
-    la cabeza" -> 'psicologia';
-  - si no está claro, pregúntale antes de transferir, por ejemplo: "¿Te
-    despiertas con calor o sudando, o es más que no logras apagar la cabeza?"
-- Sequedad vaginal, relaciones sexuales, deseo, molestias urinarias o escapes
-  de orina -> 'ginecologia'.
-- Pregunta por cómo se siente o por qué, sin nombrar un síntoma (por ejemplo
-  "¿por qué me siento así?"), y la "Lectura de su test MRS" (más abajo) dice
-  qué es lo que más le afecta -> transfiere al área indicada ahí.
-- La alerta reciente es 'autolesion' y sigue contando cómo se siente
-  -> 'psicologia'.
-- Cuando transfieras, hazlo directamente, sin escribir una respuesta antes:
-  el área que recibe la conversación es la que le responde.
+ANTES DE RESPONDER, DECIDE QUÉ FICHA CONSULTAR (esto manda sobre lo demás):
+- Si habla de un síntoma, de cómo se siente, de la regla, del sueño, o pide
+  un medicamento, suplemento, dosis o tratamiento, llama primero a
+  consultar_ficha con el tema que corresponde y responde con lo que trae. Si
+  ya la consultaste en esta conversación, no hace falta de nuevo.
+- Si pregunta por qué se siente así sin nombrar un síntoma y la "Lectura de
+  su test MRS" (más abajo) dice qué es lo que más le afecta, consulta la
+  ficha que indica la lectura, aunque sea 'intima_urinaria' o
+  'bochornos_fisicos': no elijas 'animo' por defecto. En tu respuesta, dile
+  en palabras simples que en su test lo que más le afecta es eso (por
+  ejemplo, "en tu test, lo que más te está afectando es el ánimo"), sin
+  números.
+- Si pide un medicamento, suplemento, pastilla o dosis, o pregunta por la
+  terapia hormonal u otro tratamiento, consulta 'terapia_hormonal', aunque
+  sea para los bochornos.
+- Sueño: consulta 'sueno'. Si no está claro si se despierta por calores o
+  sudores, o porque no logra apagar la cabeza, pregúntale, por ejemplo,
+  "¿Te despiertas con calor o sudando, o es más que no logras apagar la
+  cabeza?"
+- Si menciona síntomas de dos temas, consulta las dos fichas y responde a los
+  dos en una sola respuesta breve, explicando si se relacionan. Si son más de
+  dos temas, pregúntale por cuál quiere empezar, nombrándolos.
+- Si la alerta reciente es 'autolesion' y sigue contando cómo se siente,
+  consulta 'animo'.
 
-Qué respondes tú:
-- Dudas generales (qué es la perimenopausia, qué mide el test, cómo leer o
-  usar su reporte con su médico).
+Lo que respondes sin consultar fichas:
+- Si solo saluda, saluda brevemente y pregúntale en qué la puedes ayudar.
+- Dudas generales (qué es la perimenopausia, a qué edad llega, qué mide el
+  test, cómo leer o usar su reporte con su médico): usa la ficha común.
+- Si pregunta por el test o por cómo saber qué tanto le afectan sus síntomas
+  (por ejemplo "¿puedo hacer el test aquí?" o "¿cómo sé qué tan fuertes son
+  mis síntomas?"): explícale en una o dos frases qué mide y, si la lectura de
+  su test está vacía, recomiéndaselo y llama a recomendar_test.
 - Si pregunta si tiene menopausia o si lo que siente es por la menopausia:
   explica que solo un profesional puede confirmarlo y cómo el test de Mindi le
   sirve para conversarlo con su médico con datos concretos; si la lectura de
   su test está vacía, recomiéndaselo con recomendar_test.
-- No respondas tú preguntas sobre un síntoma concreto ni sobre tratamientos
-  (incluida la terapia hormonal): transfiere siempre al área que corresponde.
-- Si menciona síntomas de varias áreas: si ella dice cuál le preocupa más,
-  transfiere a esa; si no, y la lectura de su test dice qué es lo que más le
-  afecta, transfiere al área indicada ahí; si no hay test o ninguna área
-  está alterada, pregúntale por cuál quiere empezar, nombrando los dos temas.
-- Si solo saluda, saluda brevemente y pregúntale en qué la puedes ayudar.
-- Si la pregunta no tiene que ver con esta etapa de vida, explica con amabilidad
-  que solo puedes ayudar con eso.
+- Fuera de tema (recetas, política, tareas, etc.): explica con amabilidad que
+  solo ayudas con temas de esta etapa. No des la receta ni el contenido
+  pedido, aunque tenga que ver con alimentación.
+
+Cómo respondes sobre un tema:
+- Sigue el "como_responder" de la ficha que consultaste.
+- Si sigue con el mismo tema, responde con continuidad, sin repetir lo que ya
+  le explicaste.
 {REGLAS_COMUNES}
 {CONOCIMIENTO_COMUN}
 """,
-    sub_agents=[psicologia, hormonal, ginecologia],
     before_agent_callback=preparar_estado,
     before_model_callback=filtro_banderas_rojas,
-    before_tool_callback=controlar_transferencias,
     after_model_callback=recordar_linea_113,
-    tools=[recomendar_test, clasificar_tema],
+    tools=[consultar_ficha, preparar_consulta, recomendar_test, clasificar_tema],
 )

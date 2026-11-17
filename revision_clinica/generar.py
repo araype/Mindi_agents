@@ -27,18 +27,20 @@ from mindi_agent import agent as A  # noqa: E402
 
 SALIDA = Path(__file__).parent / "revision_clinica.md"
 
+# Por archivo de conocimiento/. Los temas que pide Mindi están en A.FICHAS.
 TITULOS_FICHAS = {
-    "comun": "Ficha común (la reciben todos los agentes)",
-    "psicologia": "Ficha de psicología",
-    "hormonal": "Ficha hormonal",
-    "ginecologia": "Ficha de ginecología",
+    "comun": "Ficha común (Mindi la tiene en cada mensaje)",
+    "psicologia": "Ficha de ánimo",
+    "hormonal": "Ficha del cuerpo: síntomas físicos y tratamientos",
+    "ginecologia": "Ficha de salud íntima y urinaria",
 }
 
-NOMBRES_AGENTES = {
-    "mindi": "Mindi (coordinador)",
-    "psicologia": "Psicología",
-    "hormonal": "Hormonal",
-    "ginecologia": "Ginecología",
+NOMBRES_FICHAS = {
+    "animo": "ánimo",
+    "sueno": "sueño",
+    "bochornos_fisicos": "bochornos y síntomas físicos",
+    "terapia_hormonal": "terapia hormonal y tratamientos",
+    "intima_urinaria": "salud íntima y urinaria",
 }
 
 
@@ -78,12 +80,14 @@ el detalle de lo que hoy hace Mindi.
 
 ### (a) Regla del sueño
 
-Hoy, cuando una usuaria habla de sueño, el coordinador decide según la causa:
+Hoy, cuando una usuaria habla de sueño, Mindi consulta el tema **sueño**, que
+reúne la ficha de ánimo y la sección de bochornos y sudores nocturnos, y
+responde según la causa:
 
-- Si se despierta por calores, bochornos o sudoración nocturna, la deriva al
-  área **hormonal**.
+- Si se despierta por calores, bochornos o sudoración nocturna, le explica que
+  interrumpen el sueño y le da medidas para las noches.
 - Si el insomnio viene con preocupación, tristeza, ansiedad o "no puedo apagar
-  la cabeza", la deriva a **psicología**.
+  la cabeza", valida lo que siente y le da ideas para dormir mejor.
 - Si no está claro, le pregunta antes: "¿Te despiertas con calor o sudando, o
   es más que no logras apagar la cabeza?"
 
@@ -100,7 +104,8 @@ manchado entre reglas también recibe ese mensaje.
 
 ¿Debe seguir así para todas? ¿O hay rasgos concretos que sí requieren
 evaluación (por ejemplo, sangrado muy abundante, después de las relaciones,
-o después de 12 meses sin regla) y el resto lo explica el área hormonal?
+o después de 12 meses sin regla) y el resto lo explica Mindi con el tema de
+bochornos y síntomas físicos?
 
 ### (c) Postura sobre ánimo, memoria y dolores articulares
 
@@ -108,9 +113,9 @@ La guía española AETSA 2015 sugiere informar que la menopausia solo se ha
 asociado de forma consistente con los bochornos y los síntomas vaginales, y no
 con los cambios de ánimo, la memoria o los dolores articulares (evidencia de
 calidad baja). La guía del HNHU, que es nuestra fuente principal, sí los
-relaciona con esta etapa (6.1.1, 6.4.1.2), y hoy los agentes de psicología y
-hormonal explican esos síntomas como frecuentes en esta etapa y posiblemente
-ligados a los cambios hormonales.
+relaciona con esta etapa (6.1.1, 6.4.1.2), y hoy Mindi, con las fichas de
+ánimo y hormonal, explica esos síntomas como frecuentes en esta etapa y
+posiblemente ligados a los cambios hormonales.
 
 ¿Cuál debe ser la postura de Mindi? Algunas opciones:
 
@@ -125,7 +130,7 @@ ligados a los cambios hormonales.
 def seccion_banderas() -> str:
     partes = ["""## 2. Banderas rojas y mensajes fijos
 
-Antes de que responda cualquier agente, un filtro revisa el mensaje. Si
+Antes de que responda Mindi, un filtro revisa el mensaje. Si
 encuentra una de estas frases, responde con un mensaje fijo y **no** se llama
 al modelo de IA. Las frases se buscan en minúsculas y sin tildes. Se revisan
 en este orden: autolesión, emergencia física, evaluación médica.
@@ -139,7 +144,7 @@ Ajustes para evitar falsas alarmas:
   tengo dolor de pecho"). En autolesión **nunca** se aplican negaciones: "no sé
   si quiero matarme" activa el mensaje igual.
 - **Después de una alerta de autolesión**, durante los 3 mensajes siguientes
-  los agentes responden con más cuidado y, si la respuesta no menciona la
+  Mindi responde con más cuidado y, si la respuesta no menciona la
   Línea 113, se agrega al final esta frase fija:
 """]
     partes.append(_cita(A.RECORDATORIO_113) + "\n")
@@ -163,14 +168,14 @@ def seccion_mrs() -> str:
     partes = ["""## 3. Lectura del test MRS
 
 Cuando la usuaria ya hizo el test, el sistema convierte sus puntajes en una
-frase corta que leen los agentes. Así el modelo no interpreta números por su
+frase corta que lee Mindi. Así el modelo no interpreta números por su
 cuenta. Los puntos de corte salen de la guía del HNHU (Figura 6 y 6.4.1.2):
 
-| Parte del test | Máximo | Se marca "alterada" desde | Área que la atiende |
+| Parte del test | Máximo | Se marca "alterada" desde | Ficha que consulta si es lo que más le afecta |
 |---|---|---|---|
 """]
-    for nombre, (corte, maximo, agente, tema) in A.SUBESCALAS_MRS.items():
-        partes.append(f"| {nombre} ({tema}) | {maximo} | {corte} | {NOMBRES_AGENTES[agente]} |\n")
+    for nombre, (corte, maximo, ficha, tema) in A.SUBESCALAS_MRS.items():
+        partes.append(f"| {nombre} ({tema}) | {maximo} | {corte} | {NOMBRES_FICHAS[ficha]} |\n")
     partes.append("""
 Para el total (máximo 44): 15 o más, "en el rango en que la guía considera el
 tratamiento muy recomendable"; de 8 a 14, "nivel en el que la guía sugiere
@@ -180,16 +185,16 @@ más de una parte alterada, se compara en proporción a su máximo para elegir
 
 La frase también incluye la recomendación de ir al médico que la usuaria ya
 vio en su resultado del test en la web (nivel A, B o C, o la de señal de
-alerta si marcó una), para que el agente no la contradiga.
+alerta si marcó una), para que Mindi no la contradiga.
 
 **Punto a validar:** la Figura 6 da estos cortes para decidir terapia
 hormonal; Mindi los usa para orientar a qué profesional acudir. Revisen en
-especial la frase del total de 15 o más, que menciona el tratamiento: los
-agentes la leen como contexto, y no deben ofrecer terapia hormonal si la
-usuaria no pregunta.
+especial la frase del total de 15 o más, que menciona el tratamiento: Mindi
+la lee como contexto, y no debe ofrecer terapia hormonal si la usuaria no
+pregunta.
 
-Frases posibles (los agentes no se las leen tal cual a la usuaria; las usan
-como contexto):
+Frases posibles (Mindi no se las lee tal cual a la usuaria; las usa como
+contexto):
 
 """)
     ejemplos = [
@@ -213,17 +218,44 @@ como contexto):
 def seccion_fichas() -> str:
     partes = ["""## 4. Fichas de conocimiento
 
-Es todo lo que saben los agentes sobre salud: no consultan las guías
-completas. Cada agente recibe la ficha común y la de su área. Se escribieron
-con la guía del HNHU como fuente principal y la de AETSA como complemento, y
-dejan fuera a propósito nombres de medicamentos, dosis y la "ventana
-terapéutica".
+Es todo lo que sabe Mindi sobre salud: no consulta las guías completas.
+Tiene la ficha común en cada mensaje, y cuando la usuaria habla de un
+síntoma, de cómo se siente o de un tratamiento, trae el tema que corresponde
+(la tabla de abajo dice qué partes de las fichas recibe en cada uno) junto con
+las pautas de cómo responder en ese tema. Se
+escribieron con la guía del HNHU como fuente principal y la de AETSA como
+complemento, y dejan fuera a propósito nombres de medicamentos, dosis y la
+"ventana terapéutica".
 """]
+    filas = []
+    for tema, (fuentes, cubre, _) in A.FICHAS.items():
+        recibe = "; ".join(
+            f"{TITULOS_FICHAS[archivo]}"
+            + ("" if secciones is None else f" (solo: {', '.join(secciones)})")
+            for archivo, secciones in fuentes
+        )
+        filas.append(f"| {NOMBRES_FICHAS[tema]} | {cubre} | {recibe} |")
+    partes.append(
+        "| Tema | Cuándo lo consulta | Qué recibe |\n|---|---|---|\n"
+        + "\n".join(filas) + "\n"
+    )
     for nombre, titulo in TITULOS_FICHAS.items():
         texto = (A.CARPETA_CONOCIMIENTO / f"{nombre}.md").read_text(encoding="utf-8")
         # Se quita el título propio de la ficha: lo reemplaza el de esta sección.
         cuerpo = "\n".join(texto.splitlines()[1:]).strip()
         partes.append(f"### {titulo}\n\n{_bajar_titulos(cuerpo, 2)}\n")
+    partes.append("### Cómo responde Mindi en cada tema\n")
+    for tema, (_, _, como) in A.FICHAS.items():
+        partes.append(f"#### {NOMBRES_FICHAS[tema].capitalize()}\n\n{como}\n")
+    lista = "\n".join(f"- {punto}" for punto in A.PARA_TODA_CONSULTA)
+    partes.append(f"""### Preparar la consulta
+
+Si la usuaria pide ayuda para preparar su cita, Mindi reúne la lectura de su
+test, los temas que conversaron y la sección "Para preparar la consulta" de
+esas fichas, más estos puntos para cualquier consulta:
+
+{lista}
+""")
     return "\n".join(partes)
 
 
@@ -274,9 +306,9 @@ que más nos sirve saber.
         partes.append(f"*Lo que pide el banco:* {esperado.get(caso['id'], '')}\n")
         for i, turno in enumerate(caso["turnos"], 1):
             prefijo = f"Mensaje {i}" if len(caso["turnos"]) > 1 else "Mensaje"
-            agente = NOMBRES_AGENTES.get(turno["agente"], turno["agente"])
+            fichas = ", ".join(NOMBRES_FICHAS.get(f, f) for f in turno["fichas"])
             partes.append(f"**{prefijo} de la usuaria:** {turno['mensaje']}\n")
-            partes.append(f"**Respondió:** {agente}\n")
+            partes.append(f"**Fichas que consultó:** {fichas or 'ninguna'}\n")
             partes.append(_cita(turno["respuesta"]) + "\n")
             for _, motivo in turno["fallas_rubricas"]:
                 partes.append(f"*Motivo de la revisión automática:* {motivo}\n")
@@ -386,14 +418,14 @@ acompañante de IA de Mindi, para que puedan revisarlo y decirnos qué cambiar.
 
 - Fecha: {date.today().isoformat()}
 - Versión del agente: {_version()}
-- Modelos: coordinador {A.MODELO_COORDINADOR.model}, áreas {A.MODELO.model}
+- Modelo: {A.MODELO.model}
 
 Cómo está organizado:
 
 1. Preguntas para el equipo médico: tres decisiones que necesitamos de ustedes.
 2. Banderas rojas y mensajes fijos.
 3. Lectura del test MRS.
-4. Fichas de conocimiento de cada área.
+4. Fichas de conocimiento de cada tema.
 5. El banco de preguntas con la respuesta real del agente en cada caso.
 6. Notas del reporte web ("Por qué puede pasarte"), versión provisional.
 
