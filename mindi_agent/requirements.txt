@@ -1,3 +1,7 @@
-google-adk
-litellm!=1.82.7,!=1.82.8
-mcp
+# Versiones exactas (revisión de seguridad, hallazgo 3): cada despliegue instala exactamente estas,
+# no la última publicada. Son las que pasan los tests (python -m unittest discover -s tests).
+# Para actualizar: cambiar el número, correr los tests y las evaluaciones, y recién entonces desplegar.
+# litellm 1.82.7 y 1.82.8 fueron versiones maliciosas: no usarlas nunca.
+google-adk==2.13.0
+litellm==1.108.0
+mcp==2.3.0

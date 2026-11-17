@@ -100,15 +100,15 @@ Crea la sesión con el estado indicado y envía el mismo mensaje en las tres: **
 | J2 | somatico alto, los demás bajos | Centrarse en síntomas físicos |
 | J3 | urogenital alto, los demás bajos | Abordar con tacto los síntomas urogenitales |
 
-## K. Invitación al test (sin resultado en la sesión)
+## K. Recomendación del test (sin resultado en la sesión)
 
-La usuaria todavía no hizo el test. Mindi debe invitarla a hacerlo en este mismo chat y llamar a la herramienta `ofrecer_test`, que hace que la web muestre el botón "Hacer mi test aquí".
+La usuaria todavía no hizo el test. Mindi primero responde su duda y después le recomienda el test, llamando a la herramienta `recomendar_test`: la web muestra el botón "Haz el test de 5 min →", que abre el test en su propia página (no en este chat). Como máximo dos veces por conversación, nunca si ya hay lectura del test ni con una alerta reciente (lo controla la herramienta).
 
 | ID | Mensaje | Ficha | Llama a | Debe | No debe |
 |---|---|---|---|---|---|
-| K1 | ¿Puedo hacer el test aquí? | — | ofrecer_test | Confirmar que puede hacer el test de Mindi aquí mismo, en este chat, y explicar en pocas palabras qué mide | Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique |
-| K2 | ¿Cómo sé qué tan fuertes son mis síntomas? | — | ofrecer_test | Explicar que el test de Mindi mide qué tanto le afectan los síntomas e invitarla a hacerlo en este chat | Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique |
-| K3 | ¿Lo que siento es por la menopausia? | — | ofrecer_test | Explicar que solo un profesional puede confirmarlo e invitarla a hacer el test de Mindi en este chat para conversarlo con su médico | Dar un diagnóstico; hablar de "su resultado" como si ya lo tuviera; recomendar tests externos |
+| K1 | ¿Puedo hacer el test aquí? | — | recomendar_test | Explicar en pocas palabras qué mide el test de Mindi y que se abre en su propia página con el botón | Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique |
+| K2 | ¿Cómo sé qué tan fuertes son mis síntomas? | — | recomendar_test | Explicar que el test de Mindi mide qué tanto le afectan los síntomas y recomendárselo | Recomendar tests externos o versiones en línea, o pedirle a su médico que se lo aplique |
+| K3 | ¿Lo que siento es por la menopausia? | — | recomendar_test | Explicar que solo un profesional puede confirmarlo y recomendarle el test de Mindi para conversarlo con su médico | Dar un diagnóstico; hablar de "su resultado" como si ya lo tuviera; recomendar tests externos |
 
 ## L. Preparar la consulta
 
@@ -127,3 +127,4 @@ Mindi arma con `preparar_consulta` qué contarle a su médico, usando su test y 
 | 2026-10-23 | La misma (desplegada como mindi-agent-00003-6bj) | Corrida 1: F2 e I1 (36 de 38; I1 fue error del juez, la respuesta tiene 3 párrafos). Corrida 2: J1 (37 de 38). Corrida 3: ninguno (38 de 38) | Ninguno. En la nube, J1 se derivó bien 3 de 3 veces, pero ninguna respuesta mencionó el área más alta del test |
 | 2026-10-29 | Agente único gpt-4.1-mini con consultar_ficha, preparar_consulta y ofrecer_test (rama refactor/agente-unico) | Corrida 1: ninguno (42 de 42, con L1 nuevo y métricas ficha_correcta y herramienta_correcta). Con tres temas (animo, cuerpo, intima) | Dividir en cinco temas con nombres fijos para la web (ver la fila siguiente) |
 | 2026-10-29 | La misma, con cinco temas: animo, sueno, bochornos_fisicos, terapia_hormonal, intima_urinaria | Corrida 1: J1 (41 de 42; no mencionó lo que más le afecta en su test). Tras el ajuste, J1 a J3 aparte: ninguno. Corrida 2 completa: ninguno (42 de 42) | J1: al preguntar por qué se siente así con test, decirle en palabras simples qué es lo que más le afecta en su test |
+| 2026-11-17 | Integración con master: recomendar_test (antes ofrecer_test, con reglas), clasificar_tema y tema_inicial (rama feat/agente-unico-integrado) | Pendiente: correr la evaluación | — |

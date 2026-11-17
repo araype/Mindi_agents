@@ -9,7 +9,7 @@ FINAL_RESPONSE_QUALITY:
   "ninguna": en este mensaje no consulta fichas (saluda, pregunta, etc.).
 - MENSAJE_FIJO: "autolesion", "emergencia", "evaluacion" o "ninguno".
 - HERRAMIENTA_ESPERADA: nombre de una herramienta que el agente debe llamar
-  en este mensaje, p. ej. "ofrecer_test".
+  en este mensaje, p. ej. "recomendar_test".
 """
 
 from typing import Optional

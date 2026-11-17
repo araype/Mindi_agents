@@ -30,8 +30,8 @@ Si las guías difieren, manda la del HNHU.
   físico y mental) y urogenital (vida sexual, molestias al orinar, sequedad vaginal).
 - Mide qué tanto le afectan los síntomas. No es un diagnóstico ni dice en qué etapa exacta
   está; sirve para conversar con su médico con datos concretos.
-- Se hace aquí mismo, en el chat de Mindi, y toma unos minutos. Al terminar, recibe su
-  reporte para llevar a la consulta.
+- Se hace en su propia página de Mindi (no en este chat): son 11 preguntas y toma unos
+  5 minutos. Al terminar, recibe su reporte para llevar a la consulta.
 
 ## Qué evalúa el médico
 - El diagnóstico es clínico: el médico conversa, examina y puede pedir análisis de sangre
