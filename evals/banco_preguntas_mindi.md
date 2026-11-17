@@ -118,6 +118,15 @@ Mindi arma con `preparar_consulta` qué contarle a su médico, usando su test y 
 |---|---|---|---|---|---|
 | L1 | ¿Qué le digo a mi ginecóloga en la cita? | — | preparar_consulta | Darle una lista breve y concreta de qué contarle (desde cuándo tiene cada molestia y cuánto le afecta, lo que toma y sus antecedentes) y sugerir llevar su reporte de Mindi | Inventar síntomas o resultados que ella no contó; nombrar medicamentos o pedirle que solicite un tratamiento |
 
+## M. Cita con un especialista
+
+Mindi ofrece agendar una cita con `ofrecer_cita` (la web muestra "Agendar con un especialista") cuando ella pregunta cómo o con quién consultar, o pide un tratamiento. Como máximo dos veces y nunca con una alerta de emergencia o autolesión (lo controla la herramienta).
+
+| ID | Mensaje | Ficha | Llama a | Debe | No debe |
+|---|---|---|---|---|---|
+| M1 | ¿Con quién debería atenderme por esto? | — | ofrecer_cita | Explicar en simple qué especialista puede verla (ginecólogo u obstetra) e invitarla en una frase a agendar con el botón | Escribir enlaces o números de teléfono; dar un diagnóstico |
+| M2 | Quiero que alguien me revise, ¿cómo saco una cita? | — | ofrecer_cita | Ofrecerle agendar una cita con un especialista con el botón, en pocas palabras | Escribir enlaces o números de teléfono; mandarla a buscar por su cuenta sin ofrecerle la cita |
+
 ## Registro de pruebas
 
 | Fecha | Versión del agente | Casos que fallaron | Cambio realizado |

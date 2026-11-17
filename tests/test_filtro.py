@@ -504,3 +504,34 @@ class DetalleDelReporte(unittest.TestCase):
 
     def test_la_instruccion_pide_usarlos_sin_pedirselos(self):
         self.assertIn("sin pedirle que te los repita", root_agent.instruction)
+
+
+class OfrecerCita(unittest.TestCase):
+    """17 nov. 2026: el chat puede ofrecer la cita; las reglas están en la herramienta."""
+
+    @staticmethod
+    def _contexto(**estado):
+        return SimpleNamespace(state=dict(estado))
+
+    def test_el_agente_la_tiene(self):
+        from mindi_agent.agent import ofrecer_cita
+        self.assertIn(ofrecer_cita, root_agent.tools)
+        self.assertIn("Cita con un especialista: llama a ofrecer_cita", root_agent.instruction)
+
+    def test_como_maximo_dos_veces(self):
+        from mindi_agent.agent import ofrecer_cita
+        ctx = self._contexto()
+        self.assertTrue(ofrecer_cita(ctx)["mostrar_boton"])
+        self.assertTrue(ofrecer_cita(ctx)["mostrar_boton"])
+        self.assertFalse(ofrecer_cita(ctx)["mostrar_boton"])
+
+    def test_nunca_con_emergencia_ni_autolesion(self):
+        from mindi_agent.agent import ofrecer_cita
+        for bandera in ("emergencia", "autolesion"):
+            with self.subTest(bandera=bandera):
+                self.assertFalse(ofrecer_cita(self._contexto(ultima_bandera=bandera))["mostrar_boton"])
+
+    def test_si_con_alerta_de_evaluacion(self):
+        # Con una alerta de evaluación lo indicado es justamente una cita pronto.
+        from mindi_agent.agent import ofrecer_cita
+        self.assertTrue(ofrecer_cita(self._contexto(ultima_bandera="evaluacion"))["mostrar_boton"])

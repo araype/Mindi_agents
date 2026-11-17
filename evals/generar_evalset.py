@@ -102,7 +102,7 @@ def leer_tablas(markdown: str) -> dict[str, list[dict[str, str]]]:
     seccion = None
     encabezado = None
     for linea in markdown.splitlines():
-        titulo = re.match(r"^## ([A-L])\. ", linea)
+        titulo = re.match(r"^## ([A-M])\. ", linea)
         if titulo:
             seccion, encabezado = titulo.group(1), None
             tablas[seccion] = []
@@ -191,7 +191,7 @@ def construir(markdown: str) -> EvalSet:
     tablas = leer_tablas(markdown)
     casos = []
 
-    for seccion in "ABCDEFHKL":
+    for seccion in "ABCDEFHKLM":
         for fila in tablas[seccion]:
             caso = fila["ID"]
             ajuste = AJUSTES.get(caso, {})

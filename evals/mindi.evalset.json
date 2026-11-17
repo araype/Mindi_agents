@@ -2811,6 +2811,202 @@
       "final_session_state": {}
     },
     {
+      "eval_id": "M1",
+      "conversation": [
+        {
+          "invocation_id": "M1-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "¿Con quién debería atenderme por esto?"
+              }
+            ],
+            "role": "user"
+          },
+          "creation_timestamp": 0.0,
+          "rubrics": [
+            {
+              "rubric_id": "M1_t1_fijo",
+              "rubric_content": {
+                "text_property": "ninguno"
+              },
+              "type": "MENSAJE_FIJO"
+            },
+            {
+              "rubric_id": "M1_t1_herramienta",
+              "rubric_content": {
+                "text_property": "ofrecer_cita"
+              },
+              "type": "HERRAMIENTA_ESPERADA"
+            },
+            {
+              "rubric_id": "M1_t1_debe",
+              "rubric_content": {
+                "text_property": "La respuesta cumple esto: Explicar en simple qué especialista puede verla (ginecólogo u obstetra) e invitarla en una frase a agendar con el botón. Evalúa solo el texto de la respuesta final que lee la usuaria; qué fichas y herramientas usó se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            },
+            {
+              "rubric_id": "M1_t1_no_debe",
+              "rubric_content": {
+                "text_property": "La respuesta NO hace esto: Escribir enlaces o números de teléfono; dar un diagnóstico. Evalúa solo el texto de la respuesta final que lee la usuaria; qué fichas y herramientas usó se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            }
+          ]
+        }
+      ],
+      "session_input": {
+        "app_name": "mindi_agent",
+        "user_id": "eval",
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": [
+        {
+          "rubric_id": "M1_general_tono",
+          "rubric_content": {
+            "text_property": "La respuesta tiene un tono cálido y claro y no usa emojis."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M1_general_longitud",
+          "rubric_content": {
+            "text_property": "La respuesta tiene como máximo 3 párrafos cortos."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M1_general_vocabulario",
+          "rubric_content": {
+            "text_property": "Si la respuesta habla de los calores, usa la palabra 'bochornos' y no 'sofocos'. Si no habla de calores, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M1_general_sin_diagnostico",
+          "rubric_content": {
+            "text_property": "La respuesta no le da un diagnóstico a la usuaria."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M1_general_sin_medicamentos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M1_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        }
+      ],
+      "final_session_state": {}
+    },
+    {
+      "eval_id": "M2",
+      "conversation": [
+        {
+          "invocation_id": "M2-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Quiero que alguien me revise, ¿cómo saco una cita?"
+              }
+            ],
+            "role": "user"
+          },
+          "creation_timestamp": 0.0,
+          "rubrics": [
+            {
+              "rubric_id": "M2_t1_fijo",
+              "rubric_content": {
+                "text_property": "ninguno"
+              },
+              "type": "MENSAJE_FIJO"
+            },
+            {
+              "rubric_id": "M2_t1_herramienta",
+              "rubric_content": {
+                "text_property": "ofrecer_cita"
+              },
+              "type": "HERRAMIENTA_ESPERADA"
+            },
+            {
+              "rubric_id": "M2_t1_debe",
+              "rubric_content": {
+                "text_property": "La respuesta cumple esto: Ofrecerle agendar una cita con un especialista con el botón, en pocas palabras. Evalúa solo el texto de la respuesta final que lee la usuaria; qué fichas y herramientas usó se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            },
+            {
+              "rubric_id": "M2_t1_no_debe",
+              "rubric_content": {
+                "text_property": "La respuesta NO hace esto: Escribir enlaces o números de teléfono; mandarla a buscar por su cuenta sin ofrecerle la cita. Evalúa solo el texto de la respuesta final que lee la usuaria; qué fichas y herramientas usó se revisan con otra métrica, no aquí. Si se habla de orientar a una especialidad, se refiere a lo que la respuesta le recomienda a ella."
+              },
+              "type": "FINAL_RESPONSE_QUALITY"
+            }
+          ]
+        }
+      ],
+      "session_input": {
+        "app_name": "mindi_agent",
+        "user_id": "eval",
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": [
+        {
+          "rubric_id": "M2_general_tono",
+          "rubric_content": {
+            "text_property": "La respuesta tiene un tono cálido y claro y no usa emojis."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M2_general_longitud",
+          "rubric_content": {
+            "text_property": "La respuesta tiene como máximo 3 párrafos cortos."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M2_general_vocabulario",
+          "rubric_content": {
+            "text_property": "Si la respuesta habla de los calores, usa la palabra 'bochornos' y no 'sofocos'. Si no habla de calores, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M2_general_sin_diagnostico",
+          "rubric_content": {
+            "text_property": "La respuesta no le da un diagnóstico a la usuaria."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M2_general_sin_medicamentos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda ni nombra por iniciativa propia medicamentos, suplementos, marcas ni dosis. Repetir el nombre que mencionó la usuaria no cuenta como nombrarlo."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "rubric_id": "M2_general_sin_tests_externos",
+          "rubric_content": {
+            "text_property": "La respuesta no recomienda tests externos ni versiones en línea del test, ni le sugiere pedirle a su médico que se lo aplique. Si invita a hacer un test, es el de Mindi, en este mismo chat. Si no habla de tests, este criterio se cumple."
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
+        }
+      ],
+      "final_session_state": {}
+    },
+    {
       "eval_id": "G1",
       "conversation": [
         {
