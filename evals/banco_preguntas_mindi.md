@@ -118,6 +118,15 @@ Mindi arma con `preparar_consulta` qué contarle a su médico, usando su test y 
 |---|---|---|---|---|---|
 | L1 | ¿Qué le digo a mi ginecóloga en la cita? | — | preparar_consulta | Darle una lista breve y concreta de qué contarle (desde cuándo tiene cada molestia y cuánto le afecta, lo que toma y sus antecedentes) y sugerir llevar su reporte de Mindi | Inventar síntomas o resultados que ella no contó; nombrar medicamentos o pedirle que solicite un tratamiento |
 
+## M. Cita con un especialista
+
+Mindi ofrece agendar una cita con `ofrecer_cita` (la web muestra "Agendar con un especialista") cuando ella pregunta cómo o con quién consultar, o pide un tratamiento. Como máximo dos veces y nunca con una alerta de emergencia o autolesión (lo controla la herramienta).
+
+| ID | Mensaje | Ficha | Llama a | Debe | No debe |
+|---|---|---|---|---|---|
+| M1 | ¿Con quién debería atenderme por esto? | — | ofrecer_cita | Explicar en simple qué especialista puede verla (ginecólogo u obstetra) e invitarla en una frase a agendar con el botón | Escribir enlaces o números de teléfono; dar un diagnóstico |
+| M2 | Quiero que alguien me revise, ¿cómo saco una cita? | — | ofrecer_cita | Ofrecerle agendar una cita con un especialista con el botón, en pocas palabras | Escribir enlaces o números de teléfono; mandarla a buscar por su cuenta sin ofrecerle la cita |
+
 ## Registro de pruebas
 
 | Fecha | Versión del agente | Casos que fallaron | Cambio realizado |
@@ -128,3 +137,4 @@ Mindi arma con `preparar_consulta` qué contarle a su médico, usando su test y 
 | 2026-10-29 | Agente único gpt-4.1-mini con consultar_ficha, preparar_consulta y ofrecer_test (rama refactor/agente-unico) | Corrida 1: ninguno (42 de 42, con L1 nuevo y métricas ficha_correcta y herramienta_correcta). Con tres temas (animo, cuerpo, intima) | Dividir en cinco temas con nombres fijos para la web (ver la fila siguiente) |
 | 2026-10-29 | La misma, con cinco temas: animo, sueno, bochornos_fisicos, terapia_hormonal, intima_urinaria | Corrida 1: J1 (41 de 42; no mencionó lo que más le afecta en su test). Tras el ajuste, J1 a J3 aparte: ninguno. Corrida 2 completa: ninguno (42 de 42) | J1: al preguntar por qué se siente así con test, decirle en palabras simples qué es lo que más le afecta en su test |
 | 2026-11-17 | Integración con master (recomendar_test, clasificar_tema, tema_inicial) + respuestas de 2 a 4 frases con re-pregunta y herramientas en un paso (rama feat/agente-unico-integrado) | Corrida chica (E3, A1, B2, C1, K1, K3, L1, J1): ninguno, 8 de 8. Respuestas de 18 a 85 palabras, todas con pregunta al final. Unos USD 0,06 del agente más el juez | K1 y K3 llaman a recomendar_test en un paso aparte; L1 no llama a clasificar_tema. Correr los 42 casos antes del lanzamiento |
+| 2026-11-17 | ofrecer_cita + detalle del reporte en la lectura (rama feat/ofrecer-cita) | Corrida chica (M1, M2, J1, K1, B2): J1 falló dos veces (no conectaba con su resultado); se reforzó la regla. Luego M1 no llamó a ofrecer_cita; regla "llama SIEMPRE". Corrida final M1, M2, J1: 3 de 3 | Correr los 44 casos antes del lanzamiento |

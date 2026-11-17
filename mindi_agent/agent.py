@@ -680,6 +680,30 @@ def recomendar_test(tool_context: ToolContext) -> dict:
     return {"mostrar_boton": True, "resultado": "La web muestra el botón debajo de tu respuesta."}
 
 
+# Cita con un especialista (17 nov. 2026). Como recomendar_test: el agente solo pide que se muestre el botón y
+# la web dibuja "Agendar con un especialista" (calendario de la especialista o WhatsApp del equipo). Las reglas se
+# cumplen aquí aunque el modelo se equivoque: nunca con una alerta de emergencia o autolesión (lo primero es el
+# 106 o la Línea 113) y como máximo dos veces por conversación.
+MAX_OFERTAS_CITA = 2
+ALERTAS_SIN_CITA = ("emergencia", "autolesion")
+
+
+def ofrecer_cita(tool_context: ToolContext) -> dict:
+    """Muestra debajo de tu respuesta el botón "Agendar con un especialista", para
+    coordinar una cita.
+
+    Llámala cuando le ofrezcas agendar una cita. No recibe argumentos.
+    """
+    estado = tool_context.state
+    if estado.get("ultima_bandera") in ALERTAS_SIN_CITA:
+        return {"mostrar_boton": False, "resultado": "Hay una alerta reciente: no ofrezcas una cita; lo primero es la ayuda inmediata."}
+    veces = estado.get("ofertas_cita", 0)
+    if veces >= MAX_OFERTAS_CITA:
+        return {"mostrar_boton": False, "resultado": "Ya le ofreciste la cita dos veces: no insistas y sigue respondiendo sus dudas."}
+    estado["ofertas_cita"] = veces + 1
+    return {"mostrar_boton": True, "resultado": "La web muestra el botón para agendar debajo de tu respuesta."}
+
+
 # ---------------------------------------------------------------------------
 # 2. Reglas comunes de tono y seguridad
 # ---------------------------------------------------------------------------
@@ -702,7 +726,7 @@ REGLAS_COMUNES = """
   te preocupe?"). Si en esta respuesta le recomiendas el test, la pregunta
   puede ser sobre eso ("¿Te animas a hacerlo?"). Una sola pregunta, no varias.
 - Herramientas en un solo paso: si necesitas varias (consultar_ficha,
-  clasificar_tema, recomendar_test), llámalas todas a la vez, antes de
+  clasificar_tema, recomendar_test, ofrecer_cita), llámalas todas a la vez, antes de
   escribir, nunca una después de otra: así respondes más rápido.
 - No digas "es normal": di que es frecuente en esta etapa y explica por qué.
 - Lo que sabes sale de la ficha común de abajo y de las fichas que traes con
@@ -727,6 +751,19 @@ REGLAS_COMUNES = """
   respuesta que primero resuelva su duda y termine con la recomendación; no
   escribas un texto antes de llamarla. Si la herramienta dice que no
   corresponde, no recomiendes el test en esa respuesta.
+- Cita con un especialista: si ella pregunta cómo, dónde o con quién
+  consultar, o cómo sacar una cita, llama SIEMPRE a ofrecer_cita (antes de
+  escribir, junto con las demás herramientas que necesites). Llámala también
+  cuando pide un tratamiento, medicamento o dosis (eso lo decide un
+  especialista), o cuando la lectura de su test trae una recomendación de
+  consultar ("próximas semanas", "pronto" o "lo antes posible") y ya
+  respondiste su duda.
+  En tu respuesta, invítala en una sola frase a agendar con el botón (por
+  ejemplo: "Si quieres, puedes agendar aquí una cita con un especialista").
+  No la ofrezcas si su lectura dice que puede comentarlo en su próximo control
+  y ella no lo pidió, ni mientras cuenta algo muy emocional: primero acompaña.
+  Si la herramienta dice que no corresponde, no ofrezcas la cita. No escribas
+  enlaces ni números de teléfono.
 - Tema del mensaje: en cada mensaje de la usuaria llama una vez a la herramienta
   clasificar_tema con la etiqueta de la lista que mejor lo describa (si no calza
   ninguna, "otro"). Llámala antes de escribir y no la menciones en tu respuesta.
@@ -738,8 +775,10 @@ REGLAS_COMUNES = """
   lo primero es la atención médica. No hables de "tu resultado" si no lo
   tiene. Nunca recomiendes tests externos ni versiones en línea, ni le
   sugieras pedirle a su médico que se lo aplique.
-- Si viene al caso, menciona en palabras simples qué área salió más alta en
-  su test, sin dar números ni etiquetas de gravedad.
+- Si hay lectura de su test y ella pregunta por qué se siente así o por sus
+  síntomas, conecta tu respuesta con su resultado en una frase (por ejemplo:
+  "en tu test, lo que más te está afectando es el ánimo"), sin dar números ni
+  etiquetas de gravedad. Es lo que más valora: que le hables de lo suyo.
 - Cómo llegó al chat: {contexto_tema?}. Si hay texto, la web ya la saludó sobre ese tema y le
   preguntó qué le pasa: responde en ese contexto, sin repetir el saludo ni volver a presentarte.
   Si está vacío, no lo menciones.
@@ -772,6 +811,7 @@ Tus herramientas:
   contarle a su médico. Con lo que devuelve, escribe en tu respuesta una
   lista breve y concreta para ella.
 - recomendar_test(): ver "Test de Mindi" más abajo.
+- ofrecer_cita(): ver "Cita con un especialista" más abajo.
 - clasificar_tema(tema): una etiqueta por cada mensaje de la usuaria; ver
   "Tema del mensaje" más abajo.
 
@@ -826,5 +866,5 @@ Cómo respondes sobre un tema:
     before_agent_callback=preparar_estado,
     before_model_callback=filtro_banderas_rojas,
     after_model_callback=recordar_linea_113,
-    tools=[consultar_ficha, preparar_consulta, recomendar_test, clasificar_tema],
+    tools=[consultar_ficha, preparar_consulta, recomendar_test, ofrecer_cita, clasificar_tema],
 )
