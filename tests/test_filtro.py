@@ -516,7 +516,7 @@ class OfrecerCita(unittest.TestCase):
     def test_el_agente_la_tiene(self):
         from mindi_agent.agent import ofrecer_cita
         self.assertIn(ofrecer_cita, root_agent.tools)
-        self.assertIn("Cita con un especialista: llama a ofrecer_cita", root_agent.instruction)
+        self.assertIn("llama SIEMPRE a ofrecer_cita", root_agent.instruction)
 
     def test_como_maximo_dos_veces(self):
         from mindi_agent.agent import ofrecer_cita
@@ -535,3 +535,9 @@ class OfrecerCita(unittest.TestCase):
         # Con una alerta de evaluación lo indicado es justamente una cita pronto.
         from mindi_agent.agent import ofrecer_cita
         self.assertTrue(ofrecer_cita(self._contexto(ultima_bandera="evaluacion"))["mostrar_boton"])
+
+
+class ConectaConSuResultado(unittest.TestCase):
+    def test_la_regla_pide_conectar_con_el_resultado(self):
+        self.assertIn("conecta tu respuesta con su resultado en una frase", root_agent.instruction)
+        self.assertNotIn("Si viene al caso, menciona en palabras simples", root_agent.instruction)
