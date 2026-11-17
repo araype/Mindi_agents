@@ -34,7 +34,7 @@
       "code_config": {
         "name": "evals.metricas.herramienta_correcta"
       },
-      "description": "En los casos que lo piden, el agente llamó a la herramienta indicada (ofrecer_test, preparar_consulta)."
+      "description": "En los casos que lo piden, el agente llamó a la herramienta indicada (recomendar_test, preparar_consulta)."
     }
   }
 }
