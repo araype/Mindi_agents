@@ -1,8 +1,8 @@
 {
   "criteria": {
-    "agente_correcto": 1.0,
+    "ficha_correcta": 1.0,
     "mensaje_fijo_correcto": 1.0,
-    "ofrece_test_correcto": 1.0,
+    "herramienta_correcta": 1.0,
     "respuesta_cumple_banco": {
       "threshold": 1.0,
       "judge_model_options": {
@@ -12,11 +12,11 @@
     }
   },
   "custom_metrics": {
-    "agente_correcto": {
+    "ficha_correcta": {
       "code_config": {
-        "name": "evals.metricas.agente_correcto"
+        "name": "evals.metricas.ficha_correcta"
       },
-      "description": "El agente que respondió es uno de los aceptados por el banco."
+      "description": "El agente consultó la ficha que acepta el banco, o ninguna cuando corresponde."
     },
     "mensaje_fijo_correcto": {
       "code_config": {
@@ -30,11 +30,11 @@
       },
       "description": "Un juez (gpt-4o) revisa los criterios generales y las columnas Debe y No debe."
     },
-    "ofrece_test_correcto": {
+    "herramienta_correcta": {
       "code_config": {
-        "name": "evals.metricas.ofrece_test_correcto"
+        "name": "evals.metricas.herramienta_correcta"
       },
-      "description": "En los casos que lo piden, el agente llamó a la herramienta ofrecer_test."
+      "description": "En los casos que lo piden, el agente llamó a la herramienta indicada (ofrecer_test, preparar_consulta)."
     }
   }
 }

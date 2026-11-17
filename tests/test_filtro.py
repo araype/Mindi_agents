@@ -1,10 +1,11 @@
-"""Pruebas del filtro de banderas rojas y de la lectura del MRS.
+"""Pruebas del filtro de banderas rojas, la lectura del MRS y las herramientas.
 
 No llaman al modelo. Correr desde la raíz del repo:
     python -m unittest discover -s tests -v
 Los IDs (A1, G3, J1...) son los del banco de preguntas.
 """
 
+import re
 import unittest
 from types import SimpleNamespace
 
@@ -12,16 +13,19 @@ from google.adk.models import LlmResponse
 from google.genai import types
 
 from mindi_agent.agent import (
+    CARPETA_CONOCIMIENTO,
+    FICHAS,
+    PARA_TODA_CONSULTA,
     VIGENCIA_BANDERA,
     actualizar_turno,
     clasificar_mensaje,
-    controlar_transferencias,
-    ginecologia,
-    hormonal,
+    consultar_ficha,
     lectura_mrs,
+    ofrecer_test,
+    preparar_consulta,
     RECOMENDACION_MEDICO,
-    psicologia,
     recordar_linea_113,
+    root_agent,
 )
 
 
@@ -46,12 +50,12 @@ class RecordatorioLinea113(unittest.TestCase):
         )
         self.assertIsNone(resultado)
 
-    def test_no_toca_transferencias_ni_fragmentos(self):
-        transferencia = _respuesta(types.Part(function_call=types.FunctionCall(
-            name="transfer_to_agent", args={"agent_name": "psicologia"}
+    def test_no_toca_herramientas_ni_fragmentos(self):
+        herramienta = _respuesta(types.Part(function_call=types.FunctionCall(
+            name="consultar_ficha", args={"tema": "animo"}
         )))
         fragmento = _respuesta(types.Part(text="Lamento"), partial=True)
-        for respuesta in (transferencia, fragmento):
+        for respuesta in (herramienta, fragmento):
             with self.subTest(respuesta=respuesta):
                 self.assertIsNone(recordar_linea_113(self.CON_ALERTA, respuesta))
 
@@ -59,59 +63,6 @@ class RecordatorioLinea113(unittest.TestCase):
         contexto = SimpleNamespace(state={"ultima_bandera": ""})
         resultado = recordar_linea_113(contexto, _respuesta(types.Part(text="Hola")))
         self.assertIsNone(resultado)
-
-
-class Transferencias(unittest.TestCase):
-    TRANSFERIR = SimpleNamespace(name="transfer_to_agent")
-
-    @staticmethod
-    def _contexto(agente, state=None, invocacion="inv-1"):
-        return SimpleNamespace(
-            agent_name=agente, state=state if state is not None else {},
-            invocation_id=invocacion,
-        )
-
-    def test_bloquea_transferirse_a_si_mismo(self):
-        resultado = controlar_transferencias(
-            self.TRANSFERIR, {"agent_name": "psicologia"}, self._contexto("psicologia")
-        )
-        self.assertIsNotNone(resultado)
-
-    def test_deja_pasar_la_primera_transferencia(self):
-        resultado = controlar_transferencias(
-            self.TRANSFERIR, {"agent_name": "psicologia"}, self._contexto("hormonal")
-        )
-        self.assertIsNone(resultado)
-
-    def test_bloquea_la_segunda_en_el_mismo_mensaje(self):
-        # J3: el coordinador manda a ginecología por el test y ginecología
-        # intenta reenviar a psicología.
-        state = {}
-        primera = controlar_transferencias(
-            self.TRANSFERIR, {"agent_name": "ginecologia"}, self._contexto("mindi", state)
-        )
-        segunda = controlar_transferencias(
-            self.TRANSFERIR, {"agent_name": "psicologia"},
-            self._contexto("ginecologia", state),
-        )
-        self.assertIsNone(primera)
-        self.assertIsNotNone(segunda)
-
-    def test_permite_transferir_en_el_mensaje_siguiente(self):
-        state = {}
-        controlar_transferencias(
-            self.TRANSFERIR, {"agent_name": "hormonal"}, self._contexto("mindi", state)
-        )
-        resultado = controlar_transferencias(
-            self.TRANSFERIR, {"agent_name": "psicologia"},
-            self._contexto("hormonal", state, invocacion="inv-2"),
-        )
-        self.assertIsNone(resultado)
-
-    def test_subagentes_no_se_listan_a_si_mismos(self):
-        for agente in (psicologia, hormonal, ginecologia):
-            with self.subTest(agente=agente.name):
-                self.assertNotIn(f"-> '{agente.name}'", agente.instruction)
 
 
 class BanderasDelBanco(unittest.TestCase):
@@ -220,10 +171,10 @@ class NegacionesQueNoDebenOcultarUnaBandera(unittest.TestCase):
 
 
 class VigenciaDeLaAlerta(unittest.TestCase):
-    def test_un_mensaje_cuenta_un_turno_aunque_respondan_dos_agentes(self):
+    def test_un_mensaje_cuenta_un_turno_aunque_se_llame_dos_veces(self):
         state = {}
-        actualizar_turno(state, "inv-1")  # coordinador
-        actualizar_turno(state, "inv-1")  # subagente, mismo mensaje
+        actualizar_turno(state, "inv-1")
+        actualizar_turno(state, "inv-1")  # mismo mensaje
         self.assertEqual(state["turno"], 1)
         actualizar_turno(state, "inv-2")
         self.assertEqual(state["turno"], 2)
@@ -273,28 +224,28 @@ class LecturaMRS(unittest.TestCase):
         lectura = lectura_mrs(
             {"total": 14, "somatico": 3, "psicologico": 10, "urogenital": 1}
         )
-        self.assertIn("(área: psicologia)", lectura)
+        self.assertIn("(ficha: animo)", lectura)
         self.assertIn("salud mental", lectura)
 
     def test_j2_somatico_alto(self):
         lectura = lectura_mrs(
             {"total": 13, "somatico": 11, "psicologico": 2, "urogenital": 0}
         )
-        self.assertIn("(área: hormonal)", lectura)
+        self.assertIn("(ficha: bochornos_fisicos)", lectura)
         self.assertNotIn("salud mental", lectura)
 
     def test_j3_urogenital_alto(self):
         lectura = lectura_mrs(
             {"total": 11, "somatico": 1, "psicologico": 1, "urogenital": 9}
         )
-        self.assertIn("(área: ginecologia)", lectura)
+        self.assertIn("(ficha: intima_urinaria)", lectura)
 
     def test_urogenital_se_compara_en_proporcion(self):
         # 9/12 = 0.75 supera a 10/16 = 0.625 aunque el número sea menor.
         lectura = lectura_mrs(
             {"total": 21, "somatico": 10, "psicologico": 2, "urogenital": 9}
         )
-        self.assertIn("(área: ginecologia)", lectura)
+        self.assertIn("(ficha: intima_urinaria)", lectura)
 
     def test_sin_areas_alteradas(self):
         lectura = lectura_mrs(
@@ -351,17 +302,79 @@ class LecturaMRS(unittest.TestCase):
                 self.assertIsNone(lectura_mrs(resultado))
 
 
+class Herramientas(unittest.TestCase):
+    @staticmethod
+    def _contexto(state=None):
+        return SimpleNamespace(state=state if state is not None else {})
+
+    def test_el_agente_las_tiene(self):
+        for herramienta in (consultar_ficha, preparar_consulta, ofrecer_test):
+            with self.subTest(herramienta=herramienta.__name__):
+                self.assertIn(herramienta, root_agent.tools)
+
+    def test_consultar_ficha_trae_la_ficha_y_como_responder(self):
+        resultado = consultar_ficha("bochornos_fisicos", self._contexto())
+        self.assertIn("Bochornos", resultado["ficha"])
+        self.assertEqual(resultado["como_responder"], FICHAS["bochornos_fisicos"][2])
+
+    def test_nombres_fijos_para_la_web(self):
+        # La web lee estos nombres en los eventos: cambiarlos rompe la web.
+        self.assertEqual(
+            list(FICHAS),
+            ["animo", "sueno", "bochornos_fisicos", "terapia_hormonal", "intima_urinaria"],
+        )
+
+    def test_bochornos_sin_terapia_hormonal(self):
+        # Si no pregunta por tratamientos, no debe tener de dónde sacarlos.
+        ficha = consultar_ficha("bochornos_fisicos", self._contexto())["ficha"]
+        self.assertNotIn("Terapia hormonal", ficha)
+        self.assertIn("Terapia hormonal", consultar_ficha("terapia_hormonal", self._contexto())["ficha"])
+
+    def test_cada_seccion_llega_a_algun_tema(self):
+        # Que al dividir las fichas en temas no quede contenido sin usar.
+        for archivo in ("psicologia", "hormonal", "ginecologia"):
+            texto = (CARPETA_CONOCIMIENTO / f"{archivo}.md").read_text(encoding="utf-8")
+            for titulo in re.findall(r"^## (.+)$", texto, re.M):
+                with self.subTest(archivo=archivo, seccion=titulo):
+                    self.assertTrue(any(
+                        a == archivo and (secciones is None or titulo in secciones)
+                        for fuentes, _, _ in FICHAS.values()
+                        for a, secciones in fuentes
+                    ))
+
+    def test_consultar_ficha_registra_cada_tema_una_vez(self):
+        contexto = self._contexto()
+        for tema in ("animo", "intima_urinaria", "animo"):
+            consultar_ficha(tema, contexto)
+        self.assertEqual(contexto.state["fichas_consultadas"], ["animo", "intima_urinaria"])
+
+    def test_tema_desconocido(self):
+        contexto = self._contexto()
+        resultado = consultar_ficha("cuerpo", contexto)
+        self.assertIn("error", resultado)
+        self.assertNotIn("fichas_consultadas", contexto.state)
+
+    def test_preparar_consulta_usa_test_y_temas(self):
+        contexto = self._contexto({"lectura_mrs": "somatico 11 de 16"})
+        consultar_ficha("terapia_hormonal", contexto)
+        consultar_ficha("animo", contexto)  # Su ficha no tiene esa sección.
+        resultado = preparar_consulta(contexto)
+        self.assertEqual(resultado["lectura_de_su_test"], "somatico 11 de 16")
+        self.assertEqual(len(resultado["temas_conversados"]), 2)
+        self.assertEqual(len(resultado["sugerencias_de_las_fichas"]), 1)
+        self.assertIn("lista de lo que toma", resultado["sugerencias_de_las_fichas"][0])
+        self.assertEqual(resultado["para_toda_consulta"], PARA_TODA_CONSULTA)
+
+    def test_preparar_consulta_sin_test_ni_temas(self):
+        resultado = preparar_consulta(self._contexto())
+        self.assertEqual(resultado["lectura_de_su_test"], "No hizo el test de Mindi.")
+        self.assertEqual(resultado["sugerencias_de_las_fichas"], [])
+
+    def test_ofrecer_test_no_hace_nada_mas(self):
+        self.assertIsInstance(ofrecer_test(), dict)
+
+
 if __name__ == "__main__":
     unittest.main()
 
 
-class HerramientaOfrecerTest(unittest.TestCase):
-    def test_todos_los_agentes_la_tienen(self):
-        from mindi_agent.agent import ofrecer_test, root_agent
-        for agente in (root_agent, psicologia, hormonal, ginecologia):
-            with self.subTest(agente=agente.name):
-                self.assertIn(ofrecer_test, agente.tools)
-
-    def test_no_hace_nada_mas(self):
-        from mindi_agent.agent import ofrecer_test
-        self.assertIsInstance(ofrecer_test(), dict)

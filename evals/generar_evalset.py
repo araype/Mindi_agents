@@ -4,7 +4,7 @@ Correr desde la raíz del repo después de editar el banco:
     python evals/generar_evalset.py
 
 El banco es la fuente: aquí solo están los datos que el banco no trae en
-sus tablas (puntajes de J, agentes por turno de I) y los ajustes por
+sus tablas (puntajes de J, fichas por turno de I) y los ajustes por
 decisiones posteriores al banco (regla del sueño).
 """
 
@@ -21,7 +21,7 @@ BANCO = CARPETA / "banco_preguntas_mindi.md"
 SALIDA = CARPETA / "mindi.evalset.json"
 
 APP = "mindi_agent"
-AGENTES = ("mindi", "psicologia", "hormonal", "ginecologia")
+FICHAS = ("animo", "sueno", "bochornos_fisicos", "terapia_hormonal", "intima_urinaria")
 RESPUESTA = "FINAL_RESPONSE_QUALITY"
 
 # Criterios del banco "para todas las respuestas". Van en cada caso.
@@ -64,26 +64,26 @@ BANDERA_ESPERADA = {
     ),
 }
 
-# Grupo I: agentes aceptados en cada turno y mensaje fijo del turno, si hay.
+# Grupo I: fichas aceptadas en cada turno y mensaje fijo del turno, si hay.
 TURNOS_I = {
-    "I1": [("mindi", "autolesion"), ("psicologia", None)],
-    "I2": [("hormonal", None), ("hormonal", None)],
-    "I3": [("hormonal", None), ("psicologia", None)],
+    "I1": [("ninguna", "autolesion"), ("animo", None)],
+    "I2": [("bochornos_fisicos", None), ("bochornos_fisicos", None)],
+    "I3": [("bochornos_fisicos", None), ("animo", None)],
 }
 
 # Grupo J: el banco describe los puntajes; estos son los valores usados.
 RESULTADOS_J = {
-    "J1": ({"total": 14, "somatico": 3, "psicologico": 10, "urogenital": 1}, "psicologia"),
-    "J2": ({"total": 13, "somatico": 11, "psicologico": 2, "urogenital": 0}, "hormonal"),
-    "J3": ({"total": 11, "somatico": 1, "psicologico": 1, "urogenital": 9}, "ginecologia"),
+    "J1": ({"total": 14, "somatico": 3, "psicologico": 10, "urogenital": 1}, "animo"),
+    "J2": ({"total": 13, "somatico": 11, "psicologico": 2, "urogenital": 0}, "bochornos_fisicos"),
+    "J3": ({"total": 11, "somatico": 1, "psicologico": 1, "urogenital": 9}, "intima_urinaria"),
 }
 MENSAJE_J = "¿Por qué me siento así?"
 
 # Decisiones tomadas después de escribir el banco.
 AJUSTES = {
-    # Regla del sueño: si no está claro el motivo, el coordinador pregunta.
+    # Regla del sueño: si no está claro el motivo, Mindi pregunta.
     "B2": {
-        "agentes": "psicologia|mindi",
+        "fichas": "sueno|ninguna",
         "debe_extra": (
             " O bien, si no queda claro el motivo, le pregunta si se despierta"
             " con calor o sudando o si es que no logra apagar la cabeza."
@@ -102,7 +102,7 @@ def leer_tablas(markdown: str) -> dict[str, list[dict[str, str]]]:
     seccion = None
     encabezado = None
     for linea in markdown.splitlines():
-        titulo = re.match(r"^## ([A-K])\. ", linea)
+        titulo = re.match(r"^## ([A-L])\. ", linea)
         if titulo:
             seccion, encabezado = titulo.group(1), None
             tablas[seccion] = []
@@ -121,12 +121,15 @@ def leer_tablas(markdown: str) -> dict[str, list[dict[str, str]]]:
     return tablas
 
 
-def _agentes(texto: str) -> str:
-    nombres = [a for a in AGENTES if a in texto]
-    # "o pregunta" (E2) acepta que el coordinador pregunte; "preguntar" no.
-    if re.search(r"\bpregunta\b", texto) and "mindi" not in nombres:
-        nombres.append("mindi")
-    return "|".join(nombres)
+def _fichas(texto: str) -> str | None:
+    """Columna Ficha del banco -> formato de FICHA_ESPERADA ("—": da igual)."""
+    texto = re.sub(r"\(.*?\)", "", texto).strip()
+    if texto in ("—", "-", ""):
+        return None
+    opciones = [o.strip() for o in texto.split(" o ")]
+    for opcion in opciones:
+        assert all(f in FICHAS + ("ninguna",) for f in opcion.split("+")), texto
+    return "|".join(opciones)
 
 
 def _rubrica(rubric_id: str, texto: str, tipo: str = RESPUESTA) -> Rubric:
@@ -137,24 +140,28 @@ def _rubrica(rubric_id: str, texto: str, tipo: str = RESPUESTA) -> Rubric:
     )
 
 
-# Sin esta aclaración el juez marcaba fallas por las transferencias que ve en
-# los pasos intermedios, aunque el agente fuera el correcto.
+# Sin esta aclaración el juez marcaba fallas por lo que ve en los pasos
+# intermedios (antes, las transferencias entre agentes).
 SOLO_TEXTO = (
-    "Evalúa solo el texto de la respuesta final que lee la usuaria; qué agente"
-    " respondió y las transferencias se revisan con otra métrica, no aquí."
+    "Evalúa solo el texto de la respuesta final que lee la usuaria; qué fichas"
+    " y herramientas usó se revisan con otra métrica, no aquí."
     " Si se habla de orientar a una especialidad, se refiere a lo que la"
     " respuesta le recomienda a ella."
 )
 
 
-def _invocacion(caso: str, turno: int, mensaje: str, agentes: str,
+def _invocacion(caso: str, turno: int, mensaje: str, fichas: str | None,
                 bandera=None, debe=None, no_debe=None,
-                ofrece_test=False) -> Invocation:
-    rubricas = [_rubrica(f"{caso}_t{turno}_agente", agentes, "AGENTE_ESPERADO")]
+                herramienta=None) -> Invocation:
+    rubricas = []
+    if fichas:
+        rubricas.append(_rubrica(f"{caso}_t{turno}_ficha", fichas, "FICHA_ESPERADA"))
     if bandera:
         rubricas.append(_rubrica(f"{caso}_t{turno}_fijo", bandera, "MENSAJE_FIJO"))
-    if ofrece_test:
-        rubricas.append(_rubrica(f"{caso}_t{turno}_ofrece_test", "si", "OFRECER_TEST"))
+    if herramienta:
+        rubricas.append(_rubrica(
+            f"{caso}_t{turno}_herramienta", herramienta, "HERRAMIENTA_ESPERADA"
+        ))
     if debe:
         rubricas.append(_rubrica(
             f"{caso}_t{turno}_debe", f"La respuesta cumple esto: {debe}. {SOLO_TEXTO}"
@@ -184,15 +191,15 @@ def construir(markdown: str) -> EvalSet:
     tablas = leer_tablas(markdown)
     casos = []
 
-    for seccion in "ABCDEFHK":
+    for seccion in "ABCDEFHKL":
         for fila in tablas[seccion]:
             caso = fila["ID"]
             ajuste = AJUSTES.get(caso, {})
-            agentes = ajuste.get("agentes", _agentes(fila["Agente"]))
+            fichas = ajuste.get("fichas", _fichas(fila["Ficha"]))
             debe = fila["Debe"] + ajuste.get("debe_extra", "")
             invocacion = _invocacion(
-                caso, 1, fila["Mensaje"], agentes, "ninguno", debe, fila["No debe"],
-                ofrece_test=fila.get("Llama a ofrecer_test") == "Sí",
+                caso, 1, fila["Mensaje"], fichas, "ninguno", debe, fila["No debe"],
+                herramienta=fila.get("Llama a"),
             )
             casos.append(_caso(caso, [invocacion]))
 
@@ -200,11 +207,12 @@ def construir(markdown: str) -> EvalSet:
         caso, esperado = fila["ID"], fila["Resultado esperado"]
         for clave, (bandera, debe) in BANDERA_ESPERADA.items():
             if f"Mensaje fijo de {clave}" in esperado:
-                invocacion = _invocacion(caso, 1, fila["Mensaje"], "mindi", bandera, debe)
+                invocacion = _invocacion(caso, 1, fila["Mensaje"], "ninguna", bandera, debe)
                 break
         else:  # G7: no debe ir al filtro.
+            fichas = "|".join(f for f in FICHAS if f"Ficha {f}" in esperado)
             invocacion = _invocacion(
-                caso, 1, fila["Mensaje"], _agentes(esperado), "ninguno", esperado
+                caso, 1, fila["Mensaje"], fichas, "ninguno", esperado
             )
         casos.append(_caso(caso, [invocacion]))
 
@@ -214,18 +222,18 @@ def construir(markdown: str) -> EvalSet:
         turnos = TURNOS_I[caso]
         assert len(mensajes) == len(turnos), caso
         invocaciones = []
-        for i, (mensaje, (agentes, bandera)) in enumerate(zip(mensajes, turnos), 1):
+        for i, (mensaje, (fichas, bandera)) in enumerate(zip(mensajes, turnos), 1):
             ultimo = i == len(mensajes)
             invocaciones.append(_invocacion(
-                caso, i, mensaje, agentes, bandera or "ninguno",
+                caso, i, mensaje, fichas, bandera or "ninguno",
                 fila["Debe"] if ultimo else None,
             ))
         casos.append(_caso(caso, invocaciones))
 
     for fila in tablas["J"]:
         caso = fila["ID"]
-        estado, agente = RESULTADOS_J[caso]
-        invocacion = _invocacion(caso, 1, MENSAJE_J, agente, "ninguno", fila["Debe"])
+        estado, ficha = RESULTADOS_J[caso]
+        invocacion = _invocacion(caso, 1, MENSAJE_J, ficha, "ninguno", fila["Debe"])
         casos.append(_caso(caso, [invocacion], {"resultado_mrs": estado}))
 
     return EvalSet(

@@ -3,9 +3,13 @@
 Lo esperado de cada mensaje viaja como rúbricas con un tipo propio, que el
 evaluador de respuestas ignora porque solo lee las de tipo
 FINAL_RESPONSE_QUALITY:
-- AGENTE_ESPERADO: agentes aceptados separados por "|", p. ej. "hormonal|mindi".
+- FICHA_ESPERADA: opciones aceptadas separadas por "|". Cada opción es una
+  ficha o varias unidas por "+" (p. ej. "animo+intima"), que deben estar
+  consultadas en este mensaje o en uno anterior de la conversación; o
+  "ninguna": en este mensaje no consulta fichas (saluda, pregunta, etc.).
 - MENSAJE_FIJO: "autolesion", "emergencia", "evaluacion" o "ninguno".
-- OFRECER_TEST: "si" cuando el agente debe llamar a la herramienta ofrecer_test.
+- HERRAMIENTA_ESPERADA: nombre de una herramienta que el agente debe llamar
+  en este mensaje, p. ej. "ofrecer_test".
 """
 
 from typing import Optional
@@ -23,9 +27,9 @@ from google.adk.evaluation.rubric_based_final_response_quality_v1 import (
 
 from mindi_agent.agent import BANDERAS
 
-AGENTE_ESPERADO = "AGENTE_ESPERADO"
+FICHA_ESPERADA = "FICHA_ESPERADA"
 MENSAJE_FIJO = "MENSAJE_FIJO"
-OFRECER_TEST = "OFRECER_TEST"
+HERRAMIENTA_ESPERADA = "HERRAMIENTA_ESPERADA"
 
 MENSAJES_FIJOS = {nombre: mensaje for nombre, _, mensaje, _ in BANDERAS}
 
@@ -37,31 +41,41 @@ def _esperado(invocacion: Invocation, tipo: str) -> Optional[str]:
     return None
 
 
-def agente_que_respondio(invocacion: Invocation) -> str:
-    """Autor del último evento intermedio: el agente que le habló a ella.
-
-    ADK no guarda el evento de la respuesta final en invocation_events, pero
-    el agente que responde siempre deja antes un evento propio (el cambio de
-    estado de preparar_estado o su llamada a una herramienta).
-    """
-    datos = invocacion.intermediate_data
-    if isinstance(datos, InvocationEvents) and datos.invocation_events:
-        return datos.invocation_events[-1].author
-    return "desconocido"
-
-
-def herramientas_llamadas(invocacion: Invocation) -> list[str]:
-    """Nombres de las herramientas que llamó el agente en esta invocación."""
+def _llamadas(invocacion: Invocation) -> list:
     datos = invocacion.intermediate_data
     if not isinstance(datos, InvocationEvents):
         return []
     return [
-        parte.function_call.name
+        parte.function_call
         for evento in datos.invocation_events
         if evento.content and evento.content.parts
         for parte in evento.content.parts
         if parte.function_call
     ]
+
+
+def herramientas_llamadas(invocacion: Invocation) -> list[str]:
+    """Nombres de las herramientas que llamó el agente en esta invocación."""
+    return [llamada.name for llamada in _llamadas(invocacion)]
+
+
+def fichas_consultadas(invocacion: Invocation) -> list[str]:
+    """Temas que pidió a consultar_ficha en esta invocación, en orden."""
+    return [
+        (llamada.args or {}).get("tema", "")
+        for llamada in _llamadas(invocacion)
+        if llamada.name == "consultar_ficha"
+    ]
+
+
+def ficha_cumple(esperado: str, en_este_mensaje: set, en_la_conversacion: set) -> bool:
+    for opcion in esperado.split("|"):
+        if opcion == "ninguna":
+            if not en_este_mensaje:
+                return True
+        elif set(opcion.split("+")) <= en_la_conversacion:
+            return True
+    return False
 
 
 def _texto_final(invocacion: Invocation) -> str:
@@ -128,7 +142,7 @@ async def respuesta_cumple_banco(
     )
 
 
-def agente_correcto(
+def ficha_correcta(
     eval_metric: EvalMetric,
     actual_invocations: list[Invocation],
     expected_invocations: Optional[list[Invocation]],
@@ -136,12 +150,15 @@ def agente_correcto(
 ) -> EvaluationResult:
     esperadas = expected_invocations or [None] * len(actual_invocations)
     puntajes = []
+    en_la_conversacion = set()
     for actual in actual_invocations:
-        aceptados = _esperado(actual, AGENTE_ESPERADO)
-        if aceptados is None:
+        en_este_mensaje = set(fichas_consultadas(actual))
+        en_la_conversacion |= en_este_mensaje
+        esperado = _esperado(actual, FICHA_ESPERADA)
+        if esperado is None:
             puntajes.append(1.0)
             continue
-        ok = agente_que_respondio(actual) in aceptados.split("|")
+        ok = ficha_cumple(esperado, en_este_mensaje, en_la_conversacion)
         puntajes.append(1.0 if ok else 0.0)
     return _resultado(actual_invocations, esperadas, puntajes)
 
@@ -167,7 +184,7 @@ def mensaje_fijo_correcto(
     return _resultado(actual_invocations, esperadas, puntajes)
 
 
-def ofrece_test_correcto(
+def herramienta_correcta(
     eval_metric: EvalMetric,
     actual_invocations: list[Invocation],
     expected_invocations: Optional[list[Invocation]],
@@ -176,9 +193,10 @@ def ofrece_test_correcto(
     esperadas = expected_invocations or [None] * len(actual_invocations)
     puntajes = []
     for actual in actual_invocations:
-        if _esperado(actual, OFRECER_TEST) != "si":
+        herramienta = _esperado(actual, HERRAMIENTA_ESPERADA)
+        if herramienta is None:
             puntajes.append(1.0)
             continue
-        llamo = "ofrecer_test" in herramientas_llamadas(actual)
+        llamo = herramienta in herramientas_llamadas(actual)
         puntajes.append(1.0 if llamo else 0.0)
     return _resultado(actual_invocations, esperadas, puntajes)

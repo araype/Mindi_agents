@@ -12,7 +12,7 @@ from pathlib import Path
 
 HISTORIAL = Path(__file__).parent.parent / "mindi_agent" / ".adk" / "eval_history"
 METRICAS = (
-    "agente_correcto", "mensaje_fijo_correcto", "ofrece_test_correcto",
+    "ficha_correcta", "mensaje_fijo_correcto", "herramienta_correcta",
     "respuesta_cumple_banco",
 )
 
@@ -46,8 +46,14 @@ def casos(resultado: dict) -> list[dict]:
             esperado = {
                 r["type"]: r["rubric_content"]["text_property"]
                 for r in actual.get("rubrics") or []
-                if r.get("type") in ("AGENTE_ESPERADO", "MENSAJE_FIJO")
+                if r.get("type") in ("FICHA_ESPERADA", "MENSAJE_FIJO")
             }
+            llamadas = [
+                parte["function_call"]
+                for evento in eventos
+                for parte in (evento.get("content") or {}).get("parts") or []
+                if parte.get("function_call")
+            ]
             fallas = []
             for metrica in inv["eval_metric_results"]:
                 if metrica["metric_name"] not in METRICAS:
@@ -58,8 +64,12 @@ def casos(resultado: dict) -> list[dict]:
             turnos.append({
                 "mensaje": _texto(actual["user_content"]),
                 "respuesta": _texto(actual.get("final_response")),
-                "agente": eventos[-1]["author"] if eventos else "desconocido",
-                "agente_esperado": esperado.get("AGENTE_ESPERADO"),
+                "fichas": [
+                    (llamada.get("args") or {}).get("tema", "")
+                    for llamada in llamadas if llamada["name"] == "consultar_ficha"
+                ],
+                "ficha_esperada": esperado.get("FICHA_ESPERADA"),
+                "herramientas": [llamada["name"] for llamada in llamadas],
                 "fallas_rubricas": fallas,
             })
         metricas = {
@@ -94,7 +104,8 @@ def main() -> None:
         print(f"== {caso['id']} {estado} {caso['metricas']}")
         for i, turno in enumerate(caso["turnos"], 1):
             print(f"  [{i}] ella: {turno['mensaje']}")
-            print(f"      agente: {turno['agente']} (esperado: {turno['agente_esperado']})")
+            print(f"      fichas: {turno['fichas']} (esperado: {turno['ficha_esperada']})")
+            print(f"      herramientas: {turno['herramientas']}")
             print(f"      respuesta: {turno['respuesta']}")
             for rubrica, motivo in turno["fallas_rubricas"]:
                 print(f"      x {rubrica}: {motivo}")
